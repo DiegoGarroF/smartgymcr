@@ -23,6 +23,33 @@
   --g1:#1A1A1A;
   --g2:#242424;
 }
+
+/* :root{
+  --black:#0F172A;
+  --dark:#1E293B;
+  --dark2:#334155;
+
+  --primary:#22C55E;
+  --primary-light:#4ADE80;
+  --primary-dark:#16A34A;
+
+  --accent:#10B981;
+
+  --white:#FFFFFF;
+  --gray:#94A3B8;
+}
+
+:root{
+  --black:#020617;
+  --dark:#0F172A;
+
+  --primary:#3B82F6;
+  --secondary:#22C55E;
+
+  --white:#FFFFFF;
+  --gray:#94A3B8;
+} */
+
 html{scroll-behavior:smooth}
 body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden}
 ::-webkit-scrollbar{width:3px}
@@ -64,20 +91,18 @@ nav.scrolled{
 }
 .hero-overlay{
   position:absolute;inset:0;
-  background:linear-gradient(90deg,rgba(11,11,11,.92) 40%,rgba(11,11,11,.3) 100%);
+  /* background:linear-gradient(90deg,rgba(11,11,11,.92) 40%,rgba(11,11,11,.3) 100%); */
   z-index:1;
 }
+
 .hero-content{
   position:relative;z-index:2;
   padding:0 60px;
-  width:min(780px,calc(100% - 460px));
   max-width:780px;
 }
 .hero-workout-wrap{
   position:absolute;right:60px;top:50%;transform:translateY(-50%);
-  z-index:3;
-  width:360px;
-  max-width:calc(100vw - 120px);
+  z-index:2;width:min(360px,34vw);
 }
 .hero-workout{
   background:linear-gradient(180deg,rgba(24,24,24,.94) 0%,rgba(11,11,11,.94) 100%);
@@ -297,6 +322,186 @@ h1.hero-title span{color:var(--beige)}
   background:linear-gradient(90deg,var(--beige),var(--energy));
   box-shadow:0 0 16px rgba(255,122,89,.22);
 }
+
+/* ── LIVE TICKER ── */
+.ticker-bar{
+  background:var(--black);
+  border-top:1px solid rgba(210,184,154,.07);
+  border-bottom:1px solid rgba(210,184,154,.07);
+  overflow:hidden;height:40px;display:flex;align-items:center;
+  position:relative;
+}
+.ticker-bar::before,.ticker-bar::after{
+  content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;
+}
+.ticker-bar::before{left:0;background:linear-gradient(90deg,var(--black),transparent)}
+.ticker-bar::after{right:0;background:linear-gradient(-90deg,var(--black),transparent)}
+.ticker-track{
+  display:flex;gap:0;white-space:nowrap;
+  animation:tickerScroll 28s linear infinite;
+}
+.ticker-item{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:0 28px;
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;
+  color:rgba(244,241,237,.35);
+  border-right:1px solid rgba(210,184,154,.08);
+}
+.ticker-item b{color:var(--beige);font-weight:500}
+.ticker-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--energy);
+  box-shadow:0 0 8px var(--energy);
+}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── QR CHECK-IN WIDGET ── */
+.qr-section{
+  padding:100px 60px;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+  background:var(--black);
+  border-top:1px solid rgba(210,184,154,.06);
+}
+.qr-widget{
+  position:relative;
+  background:var(--g1);
+  border:1px solid rgba(210,184,154,.1);
+  padding:32px;
+  max-width:360px;
+}
+.qr-widget-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;
+}
+.qr-widget-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px}
+.qr-status{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;
+  padding:5px 10px;
+  border:1px solid rgba(255,122,89,.2);
+  background:rgba(255,122,89,.06);
+  color:var(--energy);
+  display:flex;align-items:center;gap:6px;
+}
+.qr-box{
+  position:relative;width:100%;aspect-ratio:1;
+  background:rgba(11,11,11,.8);
+  border:1px solid rgba(210,184,154,.08);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;overflow:hidden;
+}
+.qr-grid{
+  display:grid;grid-template-columns:repeat(11,1fr);
+  gap:3px;padding:20px;width:100%;
+}
+.qr-cell{
+  aspect-ratio:1;background:rgba(210,184,154,.12);border-radius:1px;
+  transition:all .15s;
+}
+.qr-cell.active{background:var(--beige);box-shadow:0 0 6px rgba(210,184,154,.4)}
+.qr-cell.corner{background:var(--beige)!important;border-radius:2px}
+.qr-scan-line{
+  position:absolute;left:16px;right:16px;height:2px;top:20%;
+  background:linear-gradient(90deg,transparent,var(--energy),transparent);
+  box-shadow:0 0 12px rgba(255,122,89,.6);
+}
+.qr-corners span{
+  position:absolute;width:22px;height:22px;
+  border-color:var(--beige);border-style:solid;border-width:0;
+}
+.qr-corners span:nth-child(1){top:8px;left:8px;border-top-width:2px;border-left-width:2px}
+.qr-corners span:nth-child(2){top:8px;right:8px;border-top-width:2px;border-right-width:2px}
+.qr-corners span:nth-child(3){bottom:8px;left:8px;border-bottom-width:2px;border-left-width:2px}
+.qr-corners span:nth-child(4){bottom:8px;right:8px;border-bottom-width:2px;border-right-width:2px}
+.qr-result{
+  display:flex;align-items:center;gap:12px;
+  padding:14px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.05);
+  opacity:0;
+}
+.qr-result-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--beige3),var(--beige));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--black);
+  flex-shrink:0;
+}
+.qr-result-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.qr-result-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--beige);letter-spacing:.5px}
+.qr-result-check{
+  margin-left:auto;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(100,200,120,.15);border:1px solid rgba(100,200,120,.3);
+  display:flex;align-items:center;justify-content:center;
+  color:#6DC;font-size:14px;
+}
+.qr-log{margin-top:16px;display:flex;flex-direction:column;gap:6px}
+.qr-log-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:11px;color:rgba(244,241,237,.4);
+  padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.qr-log-item:last-child{border:none}
+.qr-log-name{flex:1;font-weight:500;color:rgba(244,241,237,.65)}
+.qr-log-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--gray)}
+.qr-log-dot{width:6px;height:6px;border-radius:50%;background:#6DC;flex-shrink:0;box-shadow:0 0 6px #6DC8}
+
+/* ── BODY PROGRESS ── */
+.progress-section{
+  padding:100px 60px;background:var(--g1);
+  border-top:1px solid rgba(210,184,154,.07);
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.body-chart{
+  background:var(--black);border:1px solid rgba(210,184,154,.1);padding:28px;
+}
+.body-chart-head{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;
+}
+.body-chart-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px}
+.body-chart-range{font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);letter-spacing:1px}
+.body-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
+.body-metric{
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);
+  padding:16px;position:relative;overflow:hidden;
+}
+.body-metric-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--gray);text-transform:uppercase;margin-bottom:8px}
+.body-metric-val{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;line-height:1;color:var(--beige)}
+.body-metric-delta{
+  font-family:'DM Mono',monospace;font-size:10px;margin-top:4px;
+  display:flex;align-items:center;gap:4px;
+}
+.delta-down{color:#6DC}
+.delta-up{color:var(--energy)}
+.body-sparkline{
+  height:64px;position:relative;
+  border-top:1px solid rgba(255,255,255,.05);
+  padding-top:8px;display:flex;align-items:flex-end;gap:4px;
+}
+.sparkbar{
+  flex:1;background:rgba(210,184,154,.1);border-radius:2px 2px 0 0;
+  position:relative;overflow:hidden;transition:height .3s;
+}
+.sparkbar-fill{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(180deg,var(--beige) 0%,rgba(210,184,154,.3) 100%);
+  width:100%;
+}
+.body-svg{width:100%;height:100px;overflow:visible;margin-top:16px}
+
+/* ── CALORIE MACHINE ── */
+.cal-counter{
+  display:flex;align-items:center;gap:6px;
+  font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:2px;
+  color:var(--energy);
+  background:var(--black);border:1px solid rgba(255,122,89,.15);
+  padding:16px 24px;
+  box-shadow:inset 0 0 40px rgba(255,122,89,.04);
+}
+.cal-digit{
+  display:inline-block;min-width:.55em;text-align:center;
+  transition:transform .08s ease;
+}
+.cal-unit{font-size:16px;color:rgba(255,122,89,.5);letter-spacing:1px;align-self:flex-end;padding-bottom:8px}
 
 /* SECTION COMMON */
 .sec-label{
@@ -561,21 +766,20 @@ footer{
   nav{padding:14px 24px}
   .nav-links,.scroll-hint{display:none}
   #hero .hero-content,#problema,#modulos,#auto,#testi,#planes,#cta,footer{padding-left:24px;padding-right:24px}
+  #hero{flex-direction:column;align-items:flex-start;justify-content:center;padding-top:100px;padding-bottom:40px}
+  .hero-content{max-width:none;padding-top:40px}
+  .hero-workout-wrap{
+    position:relative;top:auto;right:auto;transform:none;
+    width:calc(100% - 48px);margin:28px 24px 0;
+  }
   .stats-bar{gap:32px;flex-wrap:wrap;padding:36px 24px}
   .pain-grid,.mod-grid,.testi-grid,.planes-grid{grid-template-columns:1fr}
   #auto{grid-template-columns:1fr;gap:48px}
   .mod-header{flex-direction:column;align-items:flex-start;gap:12px}
   .mod-header p{text-align:left}
   footer{flex-direction:column;gap:18px;text-align:center;padding:28px 24px}
-}
-
-@media(max-width:960px){
-  #hero{flex-direction:column;align-items:flex-start;justify-content:center;padding-top:100px;padding-bottom:40px}
-  .hero-content{width:100%;max-width:none;padding-top:40px}
-  .hero-workout-wrap{
-    position:relative;top:auto;right:auto;transform:none;
-    width:calc(100% - 48px);max-width:none;margin:28px 24px 0;
-  }
+  .qr-section,.progress-section{grid-template-columns:1fr;gap:40px;padding:60px 24px}
+  .qr-widget{max-width:none}
 }
 </style>
 </head>
@@ -592,6 +796,29 @@ footer{
   </ul>
   <a href="https://wa.me/50660658625?text=Hola%2C%0A%0AEstuve%20revisando%20el%20sitio%20web%20de%20Smart%20Gym%20CR%20y%20me%20llam%C3%B3%20mucho%20la%20atenci%C3%B3n%20la%20plataforma.%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20sus%20caracter%C3%ADsticas%2C%20precios%20y%20el%20proceso%20de%20implementaci%C3%B3n." class="nav-btn" target="_blank" rel="noreferrer">Solicitar Demo</a>
 </nav>
+
+<!-- LIVE TICKER -->
+<div class="ticker-bar" aria-hidden="true">
+  <div class="ticker-track" id="ticker-track">
+    <span class="ticker-item"><span class="ticker-dot"></span>Check-in <b>Carlos Mora</b> · Sede Central · hace 2 min</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Membresía renovada <b>Ana Rodríguez</b> · ₡35,000</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Alerta morosidad <b>3 clientes</b> · Sede Heredia</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Nueva inscripción <b>Pedro Jiménez</b> · Plan Profesional</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Check-in <b>María Quesada</b> · Sede Cartago · hace 4 min</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Vencimiento próximo <b>8 clientes</b> · En 3 días</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Rutina actualizada <b>Luis Fernández</b> · Día 3 completado</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Cobro automático <b>₡142,000</b> · 4 renovaciones hoy</span>
+    <!-- duplicated for seamless loop -->
+    <span class="ticker-item"><span class="ticker-dot"></span>Check-in <b>Carlos Mora</b> · Sede Central · hace 2 min</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Membresía renovada <b>Ana Rodríguez</b> · ₡35,000</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Alerta morosidad <b>3 clientes</b> · Sede Heredia</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Nueva inscripción <b>Pedro Jiménez</b> · Plan Profesional</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Check-in <b>María Quesada</b> · Sede Cartago · hace 4 min</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Vencimiento próximo <b>8 clientes</b> · En 3 días</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Rutina actualizada <b>Luis Fernández</b> · Día 3 completado</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Cobro automático <b>₡142,000</b> · 4 renovaciones hoy</span>
+  </div>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -629,13 +856,12 @@ footer{
           <div class="workout-kicker">Modo performance</div>
           <div class="workout-title">Ritmo de gimnasio</div>
         </div>
-        <div class="workout-live"><span class="live-dot"></span>EN VIVO</div>
       </div>
       <div class="workout-stack">
         <div class="workout-panel">
           <div class="workout-panel-top">
-            <span class="workout-panel-label">Reps automatizadas</span>
-            <span class="workout-panel-meta">Check-ins + cobros</span>
+            <span class="workout-panel-label">Nuevos ingresos</span>
+            <span class="workout-panel-meta">Clientes activos</span>
           </div>
           <div class="rep-display">
             <div class="rep-count" id="rep-count">0</div>
@@ -703,7 +929,7 @@ footer{
     <span class="stat-track"><span class="stat-track-fill" data-progress="70"></span></span>
   </div>
   <div class="stat-item">
-    <span class="stat-num" data-target="6">0</span>
+    <span class="stat-num" data-target="9">0</span>
     <span class="stat-label">Módulos integrados</span>
     <span class="stat-track"><span class="stat-track-fill" data-progress="82"></span></span>
   </div>
@@ -717,7 +943,7 @@ footer{
 <!-- PROBLEMA -->
 <section id="problema">
   <span class="sec-label reveal">El Problema</span>
-  <h2 class="sec-title reveal">¿TODAVÍA ADMINISTRAS<br>TU GIMNASIO CON<br>EXCEL Y WHATSAPP?</h2>
+  <h2 class="sec-title reveal">¿TODAVÍA ADMINISTRAS<br>TU GIMNASIO CON<br>EXCEL?</h2>
   <div class="pain-grid">
     <div class="pain-card reveal"><span class="pain-ico">📋</span><p class="pain-txt">Membresías vencidas sin seguimiento automático que generan pérdida de ingresos mes a mes</p></div>
     <div class="pain-card reveal"><span class="pain-ico">💸</span><p class="pain-txt">Clientes morosos que pasan desapercibidos porque no hay un sistema de alertas centralizado</p></div>
@@ -725,6 +951,47 @@ footer{
     <div class="pain-card reveal"><span class="pain-ico">📄</span><p class="pain-txt">Rutinas impresas que se pierden, se desactualizan y no permiten hacer seguimiento del progreso</p></div>
     <div class="pain-card reveal"><span class="pain-ico">🔢</span><p class="pain-txt">Cobros manuales con alto riesgo de error, sin historial claro ni reportes de ingresos consolidados</p></div>
     <div class="pain-card reveal"><span class="pain-ico">🗂️</span><p class="pain-txt">Información dispersa entre WhatsApp, Excel, papel y la memoria del administrador</p></div>
+  </div>
+</section>
+
+<!-- QR CHECK-IN -->
+<section class="qr-section">
+  <div>
+    <span class="sec-label reveal">Control de Acceso</span>
+    <h2 class="sec-title reveal">CHECK-IN<br>EN <span style="color:var(--beige)">SEGUNDOS.</span></h2>
+    <p style="font-size:15px;color:rgba(244,241,237,.45);line-height:1.75;margin-top:20px;max-width:420px;margin-bottom:32px" class="reveal">Cada cliente escanea su QR al entrar. El sistema valida su membresía en tiempo real y registra la asistencia automáticamente. Sin filas, sin papel, sin errores.</p>
+    <div style="display:flex;flex-direction:column;gap:12px" class="reveal">
+      <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(244,241,237,.6)"><span style="color:var(--beige);font-size:18px">⚡</span>Validación instantánea de membresía activa</div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(244,241,237,.6)"><span style="color:var(--beige);font-size:18px">📊</span>Registro automático en historial de asistencia</div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(244,241,237,.6)"><span style="color:var(--beige);font-size:18px">🔔</span>Alerta inmediata si la membresía está vencida</div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(244,241,237,.6)"><span style="color:var(--beige);font-size:18px">🏢</span>Compatible con múltiples sedes simultáneamente</div>
+    </div>
+  </div>
+  <div class="qr-widget reveal" id="qr-widget">
+    <div class="qr-widget-head">
+      <div class="qr-widget-title">CONTROL DE ACCESO</div>
+      <div class="qr-status"><span class="live-dot"></span>ACTIVO</div>
+    </div>
+    <div class="qr-box" id="qr-box">
+      <div class="qr-corners">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="qr-grid" id="qr-grid"></div>
+      <div class="qr-scan-line" id="qr-scan-line"></div>
+    </div>
+    <div class="qr-result" id="qr-result">
+      <div class="qr-result-avatar" id="qr-avatar">AM</div>
+      <div>
+        <div class="qr-result-name" id="qr-name">Ana Mora</div>
+        <div class="qr-result-meta" id="qr-plan">PLAN PROFESIONAL · ACTIVO</div>
+      </div>
+      <div class="qr-result-check">✓</div>
+    </div>
+    <div class="qr-log" id="qr-log">
+      <div class="qr-log-item"><span class="qr-log-dot"></span><span class="qr-log-name">Carlos Vargas</span><span class="qr-log-time">08:42</span></div>
+      <div class="qr-log-item"><span class="qr-log-dot"></span><span class="qr-log-name">María Solís</span><span class="qr-log-time">08:38</span></div>
+      <div class="qr-log-item"><span class="qr-log-dot"></span><span class="qr-log-name">Pedro Jiménez</span><span class="qr-log-time">08:31</span></div>
+    </div>
   </div>
 </section>
 
@@ -750,6 +1017,88 @@ footer{
     <div class="mod-card reveal"><span class="mod-ico">👤</span><div class="mod-ttl">Portal del Cliente</div><ul class="mod-list"><li>Consultar rutina desde el celular</li><li>Revisar pagos y estado de membresía</li><li>Ver historial de asistencia</li><li>Seguimiento de progreso físico</li><li>Notificaciones importantes</li></ul></div>
     <div class="mod-card reveal"><span class="mod-ico">👨‍💼</span><div class="mod-ttl">Gestión de Personal</div><ul class="mod-list"><li>Registro de entrenadores y empleados</li><li>Roles y permisos por usuario</li><li>Control de accesos por sede</li><li>Registro de actividades</li><li>Gestión centralizada del equipo</li></ul></div>
     <div class="mod-card reveal"><span class="mod-ico">🏢</span><div class="mod-ttl">Multi-sede</div><ul class="mod-list"><li>Administra varias sucursales</li><li>Información centralizada</li><li>Reportes por sede consolidados</li><li>Usuarios y permisos por sede</li><li>Estadísticas comparativas</li></ul></div>
+  </div>
+</section>
+
+<!-- PROGRESO CORPORAL -->
+<section class="progress-section">
+  <div class="body-chart reveal" id="body-chart">
+    <div class="body-chart-head">
+      <div class="body-chart-title">PROGRESO DEL CLIENTE</div>
+      <div class="body-chart-range">ENE — JUL 2025</div>
+    </div>
+    <div class="body-metrics">
+      <div class="body-metric">
+        <div class="body-metric-label">Peso</div>
+        <div class="body-metric-val"><span class="body-val-weight">87</span><span style="font-size:18px;opacity:.5">kg</span></div>
+        <div class="body-metric-delta delta-down">↓ <span class="body-delta-weight">6.2</span> kg en 6 meses</div>
+      </div>
+      <div class="body-metric">
+        <div class="body-metric-label">% Grasa</div>
+        <div class="body-metric-val"><span class="body-val-fat">18</span><span style="font-size:18px;opacity:.5">%</span></div>
+        <div class="body-metric-delta delta-down">↓ <span>4.1</span>% reducción</div>
+      </div>
+      <div class="body-metric">
+        <div class="body-metric-label">Masa Muscular</div>
+        <div class="body-metric-val"><span class="body-val-muscle">34</span><span style="font-size:18px;opacity:.5">kg</span></div>
+        <div class="body-metric-delta delta-up">↑ <span>3.8</span> kg ganados</div>
+      </div>
+      <div class="body-metric">
+        <div class="body-metric-label">Sesiones</div>
+        <div class="body-metric-val"><span class="body-val-sessions">94</span></div>
+        <div class="body-metric-delta delta-up" style="color:var(--beige)">★ <span>92%</span> asistencia</div>
+      </div>
+    </div>
+    <!-- SVG progress line -->
+    <svg class="body-svg" id="body-svg" viewBox="0 0 320 80">
+      <defs>
+        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:var(--beige);stop-opacity:.3"/>
+          <stop offset="100%" style="stop-color:var(--beige);stop-opacity:0"/>
+        </linearGradient>
+      </defs>
+      <!-- grid lines -->
+      <line x1="0" y1="20" x2="320" y2="20" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+      <line x1="0" y1="40" x2="320" y2="40" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+      <line x1="0" y1="60" x2="320" y2="60" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+      <!-- area fill -->
+      <path id="body-area" d="M0 75 L53 72 L107 65 L160 55 L213 45 L267 38 L320 30 L320 80 L0 80 Z" fill="url(#lineGrad)" opacity="0"/>
+      <!-- line -->
+      <path id="body-line" d="M0 75 L53 72 L107 65 L160 55 L213 45 L267 38 L320 30" fill="none" stroke="var(--beige)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- dots -->
+      <circle id="bdot0" cx="0"   cy="75" r="3.5" fill="var(--beige)" opacity="0"/>
+      <circle id="bdot1" cx="53"  cy="72" r="3.5" fill="var(--beige)" opacity="0"/>
+      <circle id="bdot2" cx="107" cy="65" r="3.5" fill="var(--beige)" opacity="0"/>
+      <circle id="bdot3" cx="160" cy="55" r="3.5" fill="var(--beige)" opacity="0"/>
+      <circle id="bdot4" cx="213" cy="45" r="3.5" fill="var(--beige)" opacity="0"/>
+      <circle id="bdot5" cx="267" cy="38" r="3.5" fill="var(--beige)" opacity="0"/>
+      <circle id="bdot6" cx="320" cy="30" r="3.5" fill="var(--energy)" opacity="0"/>
+      <!-- x labels -->
+      <text x="0"   y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">ENE</text>
+      <text x="48"  y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">FEB</text>
+      <text x="100" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">MAR</text>
+      <text x="153" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">ABR</text>
+      <text x="206" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">MAY</text>
+      <text x="259" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">JUN</text>
+      <text x="310" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">JUL</text>
+    </svg>
+  </div>
+  <div>
+    <span class="sec-label reveal">Seguimiento de Clientes</span>
+    <h2 class="sec-title reveal">CADA REP<br>CUENTA.<br><span style="color:var(--beige)">CADA DATO</span><br>TAMBIÉN.</h2>
+    <p style="font-size:15px;color:rgba(244,241,237,.45);line-height:1.75;margin-top:20px;max-width:420px;margin-bottom:32px" class="reveal">Registra el progreso físico de cada cliente: peso, grasa corporal, masa muscular, medidas y fotografías. Visualiza la evolución y motiva con datos reales.</p>
+    <!-- calorie machine -->
+    <div class="reveal">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gray);margin-bottom:10px;text-transform:uppercase">Calorías quemadas hoy · Sede Central</div>
+      <div class="cal-counter" id="cal-counter">
+        <span class="cal-digit" id="cd0">0</span>
+        <span class="cal-digit" id="cd1">0</span>
+        <span class="cal-digit" id="cd2">0</span>
+        <span class="cal-digit" id="cd3">0</span>
+        <span class="cal-digit" id="cd4">0</span>
+        <span class="cal-unit">KCAL</span>
+      </div>
+    </div>
   </div>
 </section>
 
