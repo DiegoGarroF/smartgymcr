@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Gym CR – La plataforma inteligente para tu gimnasio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0B0B0B;
+    --beige: #D2B89A;
+    --beige-light: #E8D5BE;
+    --beige-dark: #B89878;
+    --white: #F4F1ED;
+    --gray: #888;
+    --gray-dark: #1A1A1A;
+    --gray-mid: #2A2A2A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+    background: rgba(11,11,11,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(210,184,154,0.1);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--beige);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--beige); }
+
+  .nav-cta {
+    background: var(--beige);
+    color: var(--black);
+    border: none;
+    padding: 10px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+
+  .nav-cta:hover { background: var(--beige-light); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(210,184,154,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 30% 40% at 20% 80%, rgba(210,184,154,0.04) 0%, transparent 60%);
+  }
+
+  .hero-grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(210,184,154,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(210,184,154,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(210,184,154,0.3);
+    padding: 6px 16px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--beige);
+    margin-bottom: 36px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--beige);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 8vw, 110px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 span { color: var(--beige); }
+
+  .hero-sub {
+    font-size: 17px;
+    line-height: 1.65;
+    color: rgba(244,241,237,0.6);
+    max-width: 540px;
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 64px;
+  }
+
+  .btn-primary {
+    background: var(--beige);
+    color: var(--black);
+    border: none;
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    background: var(--beige-light);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    color: var(--white);
+    border: 1px solid rgba(244,241,237,0.2);
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    background: transparent;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--beige);
+    color: var(--beige);
+  }
+
+  .hero-benefits {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .hero-benefit {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(244,241,237,0.5);
+  }
+
+  .hero-benefit::before {
+    content: '✓';
+    color: var(--beige);
+    font-weight: 700;
+  }
+
+  .hero-visual {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 480px;
+    z-index: 1;
+  }
+
+  .dashboard-mock {
+    background: var(--gray-dark);
+    border: 1px solid rgba(210,184,154,0.15);
+    border-radius: 4px;
+    padding: 20px;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.8);
+    position: relative;
+  }
+
+  .mock-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .mock-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  .mock-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .mock-stat {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 14px;
+    border-radius: 2px;
+  }
+
+  .mock-stat-label {
+    font-size: 9px;
+    color: var(--gray);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .mock-stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--beige);
+    letter-spacing: 1px;
+  }
+
+  .mock-bar-section { margin-bottom: 16px; }
+
+  .mock-bar-label {
+    font-size: 9px;
+    color: var(--gray);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .mock-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 52px;
+  }
+
+  .mock-bar {
+    flex: 1;
+    background: rgba(210,184,154,0.15);
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mock-bar-fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, var(--beige) 0%, var(--beige-dark) 100%);
+    border-radius: 1px;
+  }
+
+  .mock-list { }
+
+  .mock-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 10px;
+  }
+
+  .mock-list-name { color: rgba(244,241,237,0.7); }
+
+  .mock-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .badge-green { background: rgba(100,200,100,0.15); color: #6DC; }
+  .badge-orange { background: rgba(210,184,154,0.2); color: var(--beige); }
+  .badge-red { background: rgba(200,80,80,0.15); color: #F88; }
+
+  /* ── PROBLEMA ── */
+  .problema {
+    padding: 120px 60px;
+    background: var(--gray-dark);
+    border-top: 1px solid rgba(210,184,154,0.08);
+    border-bottom: 1px solid rgba(210,184,154,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .problema::before {
+    content: 'EXCEL';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 220px;
+    color: rgba(255,255,255,0.02);
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    letter-spacing: -10px;
+    pointer-events: none;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--beige);
+    margin-bottom: 20px;
+  }
+
+  .problema h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 5vw, 68px);
+    line-height: 1;
+    letter-spacing: 1px;
+    max-width: 700px;
+    margin-bottom: 48px;
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    max-width: 900px;
+  }
+
+  .pain-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 28px;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .pain-item:hover {
+    background: rgba(210,184,154,0.06);
+    border-color: rgba(210,184,154,0.2);
+  }
+
+  .pain-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .pain-text {
+    font-size: 14px;
+    color: rgba(244,241,237,0.6);
+    line-height: 1.5;
+  }
+
+  .problema-cta {
+    margin-top: 60px;
+    padding: 28px;
+    border: 1px solid rgba(210,184,154,0.2);
+    background: rgba(210,184,154,0.04);
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .problema-cta-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .problema-cta-text span { color: var(--beige); }
+
+  /* ── MÓDULOS ── */
+  .modulos {
+    padding: 120px 60px;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 72px;
+  }
+
+  .section-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  .section-header p {
+    font-size: 14px;
+    color: var(--gray);
+    max-width: 280px;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  .modulos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .modulo-card {
+    background: var(--gray-dark);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 40px 36px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .modulo-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--beige);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .modulo-card:hover::before { transform: scaleX(1); }
+
+  .modulo-card:hover {
+    background: rgba(210,184,154,0.04);
+    border-color: rgba(210,184,154,0.15);
+  }
+
+  .modulo-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .modulo-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    color: var(--white);
+  }
+
+  .modulo-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modulo-features li {
+    font-size: 13px;
+    color: rgba(244,241,237,0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .modulo-features li::before {
+    content: '';
+    width: 4px; height: 4px;
+    background: var(--beige);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── AUTOMATIZACIONES ── */
+  .auto {
+    padding: 120px 60px;
+    background: var(--gray-dark);
+    border-top: 1px solid rgba(210,184,154,0.08);
+    border-bottom: 1px solid rgba(210,184,154,0.08);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .auto h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 4vw, 60px);
+    line-height: 1;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+
+  .auto-sub {
+    font-size: 15px;
+    color: rgba(244,241,237,0.5);
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .auto-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .auto-tag {
+    background: rgba(210,184,154,0.08);
+    border: 1px solid rgba(210,184,154,0.2);
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--beige);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .auto-visual {
+    position: relative;
+  }
+
+  .flow-card {
+    background: var(--black);
+    border: 1px solid rgba(210,184,154,0.12);
+    padding: 20px 24px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .flow-card:hover {
+    border-color: rgba(210,184,154,0.3);
+    background: rgba(210,184,154,0.04);
+  }
+
+  .flow-card-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .flow-card-content { flex: 1; }
+
+  .flow-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .flow-card-desc {
+    font-size: 11px;
+    color: var(--gray);
+  }
+
+  .flow-card-status {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 3px 10px;
+    background: rgba(100,200,100,0.12);
+    color: #6DC;
+    border-radius: 20px;
+  }
+
+  .flow-connector {
+    width: 1px;
+    height: 16px;
+    background: rgba(210,184,154,0.2);
+    margin-left: 32px;
+    margin-bottom: 8px;
+  }
+
+  /* ── TESTIMONIOS ── */
+  .testimonios {
+    padding: 120px 60px;
+  }
+
+  .testimonios h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: 1px;
+    margin-bottom: 60px;
+  }
+
+  .testi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .testi-card {
+    background: var(--gray-dark);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 40px;
+    position: relative;
+  }
+
+  .testi-quote {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    color: rgba(210,184,154,0.15);
+    line-height: 1;
+    position: absolute;
+    top: 20px;
+    right: 32px;
+  }
+
+  .testi-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(244,241,237,0.8);
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  .testi-author {
+    font-size: 12px;
+    color: var(--beige);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .testi-role {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  /* ── PLANES ── */
+  .planes {
+    padding: 120px 60px;
+    background: var(--gray-dark);
+    border-top: 1px solid rgba(210,184,154,0.08);
+  }
+
+  .planes h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: 1px;
+    margin-bottom: 64px;
+    text-align: center;
+  }
+
+  .planes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .plan-card {
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 40px 36px;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .plan-card.featured {
+    background: rgba(210,184,154,0.06);
+    border-color: rgba(210,184,154,0.3);
+  }
+
+  .plan-card.featured::before {
+    content: 'MÁS POPULAR';
+    position: absolute;
+    top: -1px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--beige);
+    color: var(--black);
+    font-size: 9px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 2px;
+    padding: 5px 16px;
+  }
+
+  .plan-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .plan-desc {
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .plan-features {
+    list-style: none;
+    margin-bottom: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .plan-features li {
+    font-size: 13px;
+    color: rgba(244,241,237,0.65);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .plan-features li::before {
+    content: '✓';
+    color: var(--beige);
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .plan-btn {
+    width: 100%;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid rgba(210,184,154,0.3);
+    background: transparent;
+    color: var(--beige);
+  }
+
+  .plan-btn:hover {
+    background: rgba(210,184,154,0.1);
+  }
+
+  .plan-card.featured .plan-btn {
+    background: var(--beige);
+    color: var(--black);
+    border-color: var(--beige);
+  }
+
+  .plan-card.featured .plan-btn:hover {
+    background: var(--beige-light);
+  }
+
+  /* ── CTA FINAL ── */
+  .cta-final {
+    padding: 140px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-final::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(210,184,154,0.06) 0%, transparent 70%);
+  }
+
+  .cta-final-inner { position: relative; z-index: 2; }
+
+  .cta-final h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 7vw, 96px);
+    line-height: 0.95;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+
+  .cta-final h2 span { color: var(--beige); }
+
+  .cta-final p {
+    font-size: 16px;
+    color: rgba(244,241,237,0.5);
+    max-width: 480px;
+    margin: 0 auto 48px;
+    line-height: 1.7;
+  }
+
+  .cta-final-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+
+  .cta-contact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .cta-contact:hover { color: var(--beige); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(210,184,154,0.1);
+    padding: 40px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--beige);
+  }
+
+  .footer-tagline {
+    font-size: 11px;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 12px;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--beige); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-content > * {
+    animation: fadeUp 0.7s ease backwards;
+  }
+
+  .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+  .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-content > *:nth-child(4) { animation-delay: 0.4s; }
+  .hero-content > *:nth-child(5) { animation-delay: 0.5s; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: rgba(210,184,154,0.3); }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) {
+    .hero-visual { display: none; }
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero, .problema, .modulos, .auto, .testimonios, .planes, .cta-final { padding: 80px 24px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 20px; text-align: center; }
+    .modulos-grid, .testi-grid, .planes-grid { grid-template-columns: 1fr; }
+    .pain-grid { grid-template-columns: 1fr 1fr; }
+    .auto { grid-template-columns: 1fr; gap: 48px; }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .section-header p { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SMART GYM CR</div>
+  <ul class="nav-links">
+    <li><a href="#funcionalidades">Funcionalidades</a></li>
+    <li><a href="#automatizaciones">Automatizaciones</a></li>
+    <li><a href="#planes">Planes</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <button class="nav-cta">Solicitar Demo</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Plataforma para Gimnasios · Costa Rica</div>
+    <h1>GESTIONA TU<br>GIMNASIO<br><span>DE FORMA</span><br>INTELIGENTE.</h1>
+    <p class="hero-sub">Controla membresías, cobros, asistencia, rutinas, entrenadores y múltiples sedes desde una sola plataforma diseñada para gimnasios de Costa Rica.</p>
+    <div class="hero-actions">
+      <a href="#contacto" class="btn-primary">Solicitar Demo</a>
+      <a href="#funcionalidades" class="btn-secondary">Ver funcionalidades</a>
+    </div>
+    <div class="hero-benefits">
+      <span class="hero-benefit">Control de membresías</span>
+      <span class="hero-benefit">Cobro de mensualidades</span>
+      <span class="hero-benefit">Control de acceso</span>
+      <span class="hero-benefit">Portal para clientes</span>
+      <span class="hero-benefit">Multi sucursal</span>
+      <span class="hero-benefit">Reportes en tiempo real</span>
+    </div>
+  </div>
+
+  <!-- DASHBOARD MOCK -->
+  <div class="hero-visual">
+    <div class="dashboard-mock">
+      <div class="mock-topbar">
+        <div class="mock-dot" style="background:#FF5F57"></div>
+        <div class="mock-dot" style="background:#FFBD2E"></div>
+        <div class="mock-dot" style="background:#28CA41"></div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);margin-left:8px;">Dashboard · Julio 2025</span>
+      </div>
+
+      <div class="mock-stat-grid">
+        <div class="mock-stat">
+          <div class="mock-stat-label">Clientes Activos</div>
+          <div class="mock-stat-val">347</div>
+        </div>
+        <div class="mock-stat">
+          <div class="mock-stat-label">Ingresos / mes</div>
+          <div class="mock-stat-val">₡2.8M</div>
+        </div>
+        <div class="mock-stat">
+          <div class="mock-stat-label">Por vencer</div>
+          <div class="mock-stat-val" style="color:#F8C471;">28</div>
+        </div>
+        <div class="mock-stat">
+          <div class="mock-stat-label">Morosidad</div>
+          <div class="mock-stat-val" style="color:#F88;">12</div>
+        </div>
+      </div>
+
+      <div class="mock-bar-section">
+        <div class="mock-bar-label">Asistencia semanal</div>
+        <div class="mock-bars">
+          <div class="mock-bar"><div class="mock-bar-fill" style="height:55%"></div></div>
+          <div class="mock-bar"><div class="mock-bar-fill" style="height:80%"></div></div>
+          <div class="mock-bar"><div class="mock-bar-fill" style="height:70%"></div></div>
+          <div class="mock-bar"><div class="mock-bar-fill" style="height:95%"></div></div>
+          <div class="mock-bar"><div class="mock-bar-fill" style="height:85%"></div></div>
+          <div class="mock-bar"><div class="mock-bar-fill" style="height:60%"></div></div>
+          <div class="mock-bar"><div class="mock-bar-fill" style="height:40%"></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="mock-list-item">
+          <span class="mock-list-name">Ana Rodríguez</span>
+          <span class="mock-badge badge-orange">Vence en 3 días</span>
+        </div>
+        <div class="mock-list-item">
+          <span class="mock-list-name">Carlos Mora</span>
+          <span class="mock-badge badge-green">Activo</span>
+        </div>
+        <div class="mock-list-item">
+          <span class="mock-list-name">Luis Jiménez</span>
+          <span class="mock-badge badge-red">Moroso</span>
+        </div>
+        <div class="mock-list-item" style="border:none">
+          <span class="mock-list-name">María Quesada</span>
+          <span class="mock-badge badge-green">Activo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="section-label">El Problema</div>
+  <h2>¿TODAVÍA ADMINISTRAS TU GIMNASIO CON EXCEL Y WHATSAPP?</h2>
+  <div class="pain-grid">
+    <div class="pain-item">
+      <span class="pain-icon">📋</span>
+      <p class="pain-text">Membresías vencidas sin seguimiento automático</p>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">💸</span>
+      <p class="pain-text">Clientes morosos que pasan desapercibidos</p>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">🚪</span>
+      <p class="pain-text">Falta de control real sobre quién entra al gimnasio</p>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">📄</span>
+      <p class="pain-text">Rutinas impresas que se pierden o desactualizan</p>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">🔢</span>
+      <p class="pain-text">Cobros manuales con alto riesgo de error</p>
+    </div>
+    <div class="pain-item">
+      <span class="pain-icon">🗂️</span>
+      <p class="pain-text">Información dispersa entre WhatsApp, Excel y papel</p>
+    </div>
+  </div>
+  <div class="problema-cta">
+    <div class="problema-cta-text">
+      <span>SMART GYM CR centraliza toda la operación</span> en una sola plataforma. Automatiza el 70% de las tareas administrativas de tu gimnasio.
+    </div>
+    <a href="#contacto" class="btn-primary" style="white-space:nowrap;flex-shrink:0;">Quiero saber más</a>
+  </div>
+</section>
+
+<!-- MÓDULOS -->
+<section class="modulos" id="funcionalidades">
+  <div class="section-header">
+    <div>
+      <div class="section-label">Funcionalidades</div>
+      <h2>TODO LO QUE<br>NECESITAS</h2>
+    </div>
+    <p>Una plataforma completa para la gestión integral de tu gimnasio o cadena de gimnasios.</p>
+  </div>
+
+  <div class="modulos-grid">
+    <div class="modulo-card">
+      <span class="modulo-icon">💳</span>
+      <div class="modulo-title">Membresías y Cobros</div>
+      <ul class="modulo-features">
+        <li>Registro y control de membresías</li>
+        <li>Vencimientos y alertas automáticas</li>
+        <li>Clientes morosos en tiempo real</li>
+        <li>Historial de pagos completo</li>
+        <li>Renovaciones rápidas con un clic</li>
+      </ul>
+    </div>
+    <div class="modulo-card">
+      <span class="modulo-icon">📲</span>
+      <div class="modulo-title">Control de Asistencia</div>
+      <ul class="modulo-features">
+        <li>Check-in rápido por QR o código</li>
+        <li>Control por día y horario</li>
+        <li>Historial de visitas por cliente</li>
+        <li>Reportes de asistencia detallados</li>
+        <li>Acceso únicamente con membresía activa</li>
+      </ul>
+    </div>
+    <div class="modulo-card">
+      <span class="modulo-icon">🏋️</span>
+      <div class="modulo-title">Rutinas y Seguimiento</div>
+      <ul class="modulo-features">
+        <li>Rutinas personalizadas por cliente</li>
+        <li>Fotografías de ejercicios</li>
+        <li>Mediciones corporales y evolución</li>
+        <li>Objetivos físicos y progreso</li>
+        <li>Historial completo del cliente</li>
+      </ul>
+    </div>
+    <div class="modulo-card">
+      <span class="modulo-icon">👤</span>
+      <div class="modulo-title">Portal del Cliente</div>
+      <ul class="modulo-features">
+        <li>Consultar rutina desde el celular</li>
+        <li>Revisar pagos y estado de membresía</li>
+        <li>Ver historial de asistencia</li>
+        <li>Seguimiento de progreso físico</li>
+        <li>Notificaciones importantes</li>
+      </ul>
+    </div>
+    <div class="modulo-card">
+      <span class="modulo-icon">👨‍💼</span>
+      <div class="modulo-title">Gestión de Personal</div>
+      <ul class="modulo-features">
+        <li>Registro de entrenadores y empleados</li>
+        <li>Roles y permisos por usuario</li>
+        <li>Control de accesos por sede</li>
+        <li>Registro de actividades</li>
+        <li>Gestión centralizada del equipo</li>
+      </ul>
+    </div>
+    <div class="modulo-card">
+      <span class="modulo-icon">🏢</span>
+      <div class="modulo-title">Multi-sede y Multi-empresa</div>
+      <ul class="modulo-features">
+        <li>Administra varias sucursales</li>
+        <li>Información centralizada y consolidada</li>
+        <li>Reportes por sede e individuales</li>
+        <li>Usuarios y permisos por sede</li>
+        <li>Estadísticas comparativas</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- AUTOMATIZACIONES -->
+<section class="auto" id="automatizaciones">
+  <div class="auto-left">
+    <div class="section-label">Automatizaciones</div>
+    <h2>SMART GYM CR<br>TRABAJA POR TI.</h2>
+    <p class="auto-sub">Automatiza las tareas repetitivas que consumen tu tiempo todos los días. Enfócate en tus clientes, nosotros nos encargamos del resto.</p>
+    <div class="auto-tags">
+      <span class="auto-tag">🎂 Cumpleaños</span>
+      <span class="auto-tag">📅 Membresías por vencer</span>
+      <span class="auto-tag">⚠️ Clientes morosos</span>
+      <span class="auto-tag">💰 Cobros pendientes</span>
+      <span class="auto-tag">📲 Mensajes automáticos</span>
+      <span class="auto-tag">📈 Clientes inactivos</span>
+    </div>
+  </div>
+  <div class="auto-visual">
+    <div class="flow-card">
+      <span class="flow-card-icon">📅</span>
+      <div class="flow-card-content">
+        <div class="flow-card-title">Membresía próxima a vencer</div>
+        <div class="flow-card-desc">Ana Rodríguez · Vence en 3 días</div>
+      </div>
+      <span class="flow-card-status">ACTIVO</span>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-card">
+      <span class="flow-card-icon">📲</span>
+      <div class="flow-card-content">
+        <div class="flow-card-title">Mensaje automático enviado</div>
+        <div class="flow-card-desc">WhatsApp / Email · Recordatorio de renovación</div>
+      </div>
+      <span class="flow-card-status">ENVIADO</span>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-card">
+      <span class="flow-card-icon">💰</span>
+      <div class="flow-card-content">
+        <div class="flow-card-title">Cobro registrado</div>
+        <div class="flow-card-desc">₡35,000 · Plan Mensual · Renovado</div>
+      </div>
+      <span class="flow-card-status">PAGADO</span>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-card">
+      <span class="flow-card-icon">✅</span>
+      <div class="flow-card-content">
+        <div class="flow-card-title">Membresía renovada automáticamente</div>
+        <div class="flow-card-desc">Nuevo vencimiento: 15 de Agosto 2025</div>
+      </div>
+      <span class="flow-card-status">LISTO</span>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section class="testimonios">
+  <div class="section-label">Testimonios</div>
+  <h2>LO QUE DICEN<br>NUESTROS CLIENTES</h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Redujimos el tiempo administrativo en más de un 70%. Antes perdíamos horas en Excel, ahora todo está automatizado.</p>
+      <div class="testi-author">Propietario de Gimnasio</div>
+      <div class="testi-role">San José, Costa Rica</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Ahora sabemos exactamente quién debe pagar y quién está por vencer. La morosidad bajó drásticamente desde que usamos la plataforma.</p>
+      <div class="testi-author">Administrador</div>
+      <div class="testi-role">Heredia, Costa Rica</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Los clientes aman consultar sus rutinas desde el celular. Es un diferenciador enorme frente a la competencia.</p>
+      <div class="testi-author">Entrenador</div>
+      <div class="testi-role">Cartago, Costa Rica</div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANES -->
+<section class="planes" id="planes">
+  <div class="section-label" style="text-align:center;">Planes</div>
+  <h2>ELIGE TU PLAN</h2>
+  <div class="planes-grid">
+    <div class="plan-card">
+      <div class="plan-name">Básico</div>
+      <div class="plan-desc">Ideal para gimnasios pequeños que quieren empezar a digitalizar su operación.</div>
+      <ul class="plan-features">
+        <li>Hasta 200 clientes</li>
+        <li>Control de membresías</li>
+        <li>Registro de cobros</li>
+        <li>Control de asistencia</li>
+        <li>Reportes esenciales</li>
+      </ul>
+      <button class="plan-btn">Solicitar Demo</button>
+    </div>
+    <div class="plan-card featured">
+      <div class="plan-name">Profesional</div>
+      <div class="plan-desc">Para gimnasios en crecimiento que necesitan herramientas avanzadas de fidelización.</div>
+      <ul class="plan-features">
+        <li>Clientes ilimitados</li>
+        <li>Portal del cliente</li>
+        <li>Rutinas personalizadas</li>
+        <li>Mediciones corporales</li>
+        <li>Notificaciones automáticas</li>
+        <li>Reportería avanzada</li>
+      </ul>
+      <button class="plan-btn">Solicitar Demo</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-desc">Para cadenas y empresas con múltiples sucursales y equipos grandes.</div>
+      <ul class="plan-features">
+        <li>Multi sede y multi empresa</li>
+        <li>Usuarios ilimitados</li>
+        <li>Reportería consolidada</li>
+        <li>Roles y permisos avanzados</li>
+        <li>Soporte prioritario</li>
+        <li>Configuración personalizada</li>
+      </ul>
+      <button class="plan-btn">Contactar Ventas</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final" id="contacto">
+  <div class="cta-final-inner">
+    <div class="section-label" style="text-align:center;">¿Listo para empezar?</div>
+    <h2>LLEVA TU GIMNASIO<br>AL <span>SIGUIENTE</span><br>NIVEL.</h2>
+    <p>Administra clientes, membresías, entrenadores, pagos y sedes desde una sola plataforma diseñada para Costa Rica.</p>
+    <div class="cta-final-actions">
+      <a href="#" class="btn-primary">Solicitar Demostración</a>
+      <a href="tel:+50600000000" class="cta-contact">
+        <span>📞</span> Contáctanos directamente
+      </a>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gray);letter-spacing:1px;">
+      smartgymcr.com
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">SMART GYM CR</div>
+    <div class="footer-tagline" style="margin-top:6px;">La plataforma inteligente para tu gimnasio.</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#funcionalidades">Funcionalidades</a></li>
+    <li><a href="#automatizaciones">Automatizaciones</a></li>
+    <li><a href="#planes">Planes</a></li>
+    <li><a href="#contacto">Demo</a></li>
+  </ul>
+  <div style="font-size:11px;color:var(--gray);">© 2025 Smart Gym CR · Todos los derechos reservados</div>
+</footer>
+
+<script>
+  // Subtle scroll animation for cards
+  const cards = document.querySelectorAll('.modulo-card, .testi-card, .plan-card, .pain-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }, 80 * (Array.from(cards).indexOf(entry.target) % 3));
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  cards.forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(24px)';
+    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(card);
+  });
+</script>
+</body>
+</html>
