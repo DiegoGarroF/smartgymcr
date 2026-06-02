@@ -5,1178 +5,550 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Gym CR – La plataforma inteligente para tu gimnasio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <style>
-  :root {
-    --black: #0B0B0B;
-    --beige: #D2B89A;
-    --beige-light: #E8D5BE;
-    --beige-dark: #B89878;
-    --white: #F4F1ED;
-    --gray: #888;
-    --gray-dark: #1A1A1A;
-    --gray-mid: #2A2A2A;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-  }
-
-  /* NOISE TEXTURE */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.4;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 60px;
-    background: rgba(11,11,11,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(210,184,154,0.1);
-  }
-
-  .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 3px;
-    color: var(--beige);
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 36px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    color: var(--gray);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--beige); }
-
-  .nav-cta {
-    background: var(--beige);
-    color: var(--black);
-    border: none;
-    padding: 10px 24px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    transition: background 0.2s;
-  }
-
-  .nav-cta:hover { background: var(--beige-light); }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding: 120px 60px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background: 
-      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(210,184,154,0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 30% 40% at 20% 80%, rgba(210,184,154,0.04) 0%, transparent 60%);
-  }
-
-  .hero-grid-lines {
-    position: absolute;
-    inset: 0;
-    background-image: 
-      linear-gradient(rgba(210,184,154,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(210,184,154,0.04) 1px, transparent 1px);
-    background-size: 80px 80px;
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 760px;
-  }
-
-  .hero-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: 1px solid rgba(210,184,154,0.3);
-    padding: 6px 16px;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--beige);
-    margin-bottom: 36px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .hero-tag::before {
-    content: '';
-    width: 6px; height: 6px;
-    background: var(--beige);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .hero h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(64px, 8vw, 110px);
-    line-height: 0.92;
-    letter-spacing: 2px;
-    margin-bottom: 28px;
-  }
-
-  .hero h1 span { color: var(--beige); }
-
-  .hero-sub {
-    font-size: 17px;
-    line-height: 1.65;
-    color: rgba(244,241,237,0.6);
-    max-width: 540px;
-    margin-bottom: 48px;
-    font-weight: 300;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    margin-bottom: 64px;
-  }
-
-  .btn-primary {
-    background: var(--beige);
-    color: var(--black);
-    border: none;
-    padding: 16px 36px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: inline-block;
-  }
-
-  .btn-primary:hover {
-    background: var(--beige-light);
-    transform: translateY(-1px);
-  }
-
-  .btn-secondary {
-    color: var(--white);
-    border: 1px solid rgba(244,241,237,0.2);
-    padding: 16px 36px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    background: transparent;
-    transition: all 0.2s;
-    text-decoration: none;
-    display: inline-block;
-  }
-
-  .btn-secondary:hover {
-    border-color: var(--beige);
-    color: var(--beige);
-  }
-
-  .hero-benefits {
-    display: flex;
-    gap: 28px;
-    flex-wrap: wrap;
-  }
-
-  .hero-benefit {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: rgba(244,241,237,0.5);
-  }
-
-  .hero-benefit::before {
-    content: '✓';
-    color: var(--beige);
-    font-weight: 700;
-  }
-
-  .hero-visual {
-    position: absolute;
-    right: 60px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 480px;
-    z-index: 1;
-  }
-
-  .dashboard-mock {
-    background: var(--gray-dark);
-    border: 1px solid rgba(210,184,154,0.15);
-    border-radius: 4px;
-    padding: 20px;
-    box-shadow: 0 40px 120px rgba(0,0,0,0.8);
-    position: relative;
-  }
-
-  .mock-topbar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .mock-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-  }
-
-  .mock-stat-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .mock-stat {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
-    padding: 14px;
-    border-radius: 2px;
-  }
-
-  .mock-stat-label {
-    font-size: 9px;
-    color: var(--gray);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .mock-stat-val {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    color: var(--beige);
-    letter-spacing: 1px;
-  }
-
-  .mock-bar-section { margin-bottom: 16px; }
-
-  .mock-bar-label {
-    font-size: 9px;
-    color: var(--gray);
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .mock-bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 6px;
-    height: 52px;
-  }
-
-  .mock-bar {
-    flex: 1;
-    background: rgba(210,184,154,0.15);
-    border-radius: 1px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .mock-bar-fill {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: linear-gradient(180deg, var(--beige) 0%, var(--beige-dark) 100%);
-    border-radius: 1px;
-  }
-
-  .mock-list { }
-
-  .mock-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 10px;
-  }
-
-  .mock-list-name { color: rgba(244,241,237,0.7); }
-
-  .mock-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    padding: 2px 8px;
-    border-radius: 20px;
-  }
-
-  .badge-green { background: rgba(100,200,100,0.15); color: #6DC; }
-  .badge-orange { background: rgba(210,184,154,0.2); color: var(--beige); }
-  .badge-red { background: rgba(200,80,80,0.15); color: #F88; }
-
-  /* ── PROBLEMA ── */
-  .problema {
-    padding: 120px 60px;
-    background: var(--gray-dark);
-    border-top: 1px solid rgba(210,184,154,0.08);
-    border-bottom: 1px solid rgba(210,184,154,0.08);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .problema::before {
-    content: 'EXCEL';
-    position: absolute;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 220px;
-    color: rgba(255,255,255,0.02);
-    right: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-    letter-spacing: -10px;
-    pointer-events: none;
-  }
-
-  .section-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--beige);
-    margin-bottom: 20px;
-  }
-
-  .problema h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(42px, 5vw, 68px);
-    line-height: 1;
-    letter-spacing: 1px;
-    max-width: 700px;
-    margin-bottom: 48px;
-  }
-
-  .pain-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    max-width: 900px;
-  }
-
-  .pain-item {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    padding: 28px;
-    transition: all 0.3s;
-    cursor: default;
-  }
-
-  .pain-item:hover {
-    background: rgba(210,184,154,0.06);
-    border-color: rgba(210,184,154,0.2);
-  }
-
-  .pain-icon {
-    font-size: 24px;
-    margin-bottom: 12px;
-    display: block;
-  }
-
-  .pain-text {
-    font-size: 14px;
-    color: rgba(244,241,237,0.6);
-    line-height: 1.5;
-  }
-
-  .problema-cta {
-    margin-top: 60px;
-    padding: 28px;
-    border: 1px solid rgba(210,184,154,0.2);
-    background: rgba(210,184,154,0.04);
-    max-width: 600px;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
-
-  .problema-cta-text {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1.5;
-  }
-
-  .problema-cta-text span { color: var(--beige); }
-
-  /* ── MÓDULOS ── */
-  .modulos {
-    padding: 120px 60px;
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 72px;
-  }
-
-  .section-header h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 5vw, 64px);
-    line-height: 1;
-    letter-spacing: 1px;
-  }
-
-  .section-header p {
-    font-size: 14px;
-    color: var(--gray);
-    max-width: 280px;
-    text-align: right;
-    line-height: 1.6;
-  }
-
-  .modulos-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
-
-  .modulo-card {
-    background: var(--gray-dark);
-    border: 1px solid rgba(255,255,255,0.05);
-    padding: 40px 36px;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .modulo-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--beige);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
-  }
-
-  .modulo-card:hover::before { transform: scaleX(1); }
-
-  .modulo-card:hover {
-    background: rgba(210,184,154,0.04);
-    border-color: rgba(210,184,154,0.15);
-  }
-
-  .modulo-icon {
-    font-size: 28px;
-    margin-bottom: 20px;
-    display: block;
-  }
-
-  .modulo-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-    color: var(--white);
-  }
-
-  .modulo-features {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .modulo-features li {
-    font-size: 13px;
-    color: rgba(244,241,237,0.5);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .modulo-features li::before {
-    content: '';
-    width: 4px; height: 4px;
-    background: var(--beige);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  /* ── AUTOMATIZACIONES ── */
-  .auto {
-    padding: 120px 60px;
-    background: var(--gray-dark);
-    border-top: 1px solid rgba(210,184,154,0.08);
-    border-bottom: 1px solid rgba(210,184,154,0.08);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-  }
-
-  .auto h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 4vw, 60px);
-    line-height: 1;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-  }
-
-  .auto-sub {
-    font-size: 15px;
-    color: rgba(244,241,237,0.5);
-    line-height: 1.7;
-    margin-bottom: 40px;
-  }
-
-  .auto-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .auto-tag {
-    background: rgba(210,184,154,0.08);
-    border: 1px solid rgba(210,184,154,0.2);
-    padding: 8px 16px;
-    font-size: 12px;
-    color: var(--beige);
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.5px;
-  }
-
-  .auto-visual {
-    position: relative;
-  }
-
-  .flow-card {
-    background: var(--black);
-    border: 1px solid rgba(210,184,154,0.12);
-    padding: 20px 24px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    position: relative;
-    transition: all 0.2s;
-  }
-
-  .flow-card:hover {
-    border-color: rgba(210,184,154,0.3);
-    background: rgba(210,184,154,0.04);
-  }
-
-  .flow-card-icon {
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .flow-card-content { flex: 1; }
-
-  .flow-card-title {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 2px;
-  }
-
-  .flow-card-desc {
-    font-size: 11px;
-    color: var(--gray);
-  }
-
-  .flow-card-status {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    padding: 3px 10px;
-    background: rgba(100,200,100,0.12);
-    color: #6DC;
-    border-radius: 20px;
-  }
-
-  .flow-connector {
-    width: 1px;
-    height: 16px;
-    background: rgba(210,184,154,0.2);
-    margin-left: 32px;
-    margin-bottom: 8px;
-  }
-
-  /* ── TESTIMONIOS ── */
-  .testimonios {
-    padding: 120px 60px;
-  }
-
-  .testimonios h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 5vw, 64px);
-    line-height: 1;
-    letter-spacing: 1px;
-    margin-bottom: 60px;
-  }
-
-  .testi-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
-
-  .testi-card {
-    background: var(--gray-dark);
-    border: 1px solid rgba(255,255,255,0.05);
-    padding: 40px;
-    position: relative;
-  }
-
-  .testi-quote {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 80px;
-    color: rgba(210,184,154,0.15);
-    line-height: 1;
-    position: absolute;
-    top: 20px;
-    right: 32px;
-  }
-
-  .testi-text {
-    font-size: 15px;
-    line-height: 1.7;
-    color: rgba(244,241,237,0.8);
-    margin-bottom: 28px;
-    font-style: italic;
-  }
-
-  .testi-author {
-    font-size: 12px;
-    color: var(--beige);
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .testi-role {
-    font-size: 11px;
-    color: var(--gray);
-    margin-top: 4px;
-  }
-
-  /* ── PLANES ── */
-  .planes {
-    padding: 120px 60px;
-    background: var(--gray-dark);
-    border-top: 1px solid rgba(210,184,154,0.08);
-  }
-
-  .planes h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 5vw, 64px);
-    line-height: 1;
-    letter-spacing: 1px;
-    margin-bottom: 64px;
-    text-align: center;
-  }
-
-  .planes-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    max-width: 960px;
-    margin: 0 auto;
-  }
-
-  .plan-card {
-    background: var(--black);
-    border: 1px solid rgba(255,255,255,0.06);
-    padding: 40px 36px;
-    position: relative;
-    transition: all 0.3s;
-  }
-
-  .plan-card.featured {
-    background: rgba(210,184,154,0.06);
-    border-color: rgba(210,184,154,0.3);
-  }
-
-  .plan-card.featured::before {
-    content: 'MÁS POPULAR';
-    position: absolute;
-    top: -1px; left: 50%;
-    transform: translateX(-50%);
-    background: var(--beige);
-    color: var(--black);
-    font-size: 9px;
-    font-weight: 700;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 2px;
-    padding: 5px 16px;
-  }
-
-  .plan-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-  }
-
-  .plan-desc {
-    font-size: 12px;
-    color: var(--gray);
-    margin-bottom: 28px;
-    padding-bottom: 28px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .plan-features {
-    list-style: none;
-    margin-bottom: 36px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .plan-features li {
-    font-size: 13px;
-    color: rgba(244,241,237,0.65);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .plan-features li::before {
-    content: '✓';
-    color: var(--beige);
-    font-weight: 700;
-    font-size: 12px;
-    flex-shrink: 0;
-  }
-
-  .plan-btn {
-    width: 100%;
-    padding: 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: 1px solid rgba(210,184,154,0.3);
-    background: transparent;
-    color: var(--beige);
-  }
-
-  .plan-btn:hover {
-    background: rgba(210,184,154,0.1);
-  }
-
-  .plan-card.featured .plan-btn {
-    background: var(--beige);
-    color: var(--black);
-    border-color: var(--beige);
-  }
-
-  .plan-card.featured .plan-btn:hover {
-    background: var(--beige-light);
-  }
-
-  /* ── CTA FINAL ── */
-  .cta-final {
-    padding: 140px 60px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cta-final::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(210,184,154,0.06) 0%, transparent 70%);
-  }
-
-  .cta-final-inner { position: relative; z-index: 2; }
-
-  .cta-final h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(52px, 7vw, 96px);
-    line-height: 0.95;
-    letter-spacing: 2px;
-    margin-bottom: 24px;
-  }
-
-  .cta-final h2 span { color: var(--beige); }
-
-  .cta-final p {
-    font-size: 16px;
-    color: rgba(244,241,237,0.5);
-    max-width: 480px;
-    margin: 0 auto 48px;
-    line-height: 1.7;
-  }
-
-  .cta-final-actions {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 48px;
-  }
-
-  .cta-contact {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: var(--gray);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .cta-contact:hover { color: var(--beige); }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid rgba(210,184,154,0.1);
-    padding: 40px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 3px;
-    color: var(--beige);
-  }
-
-  .footer-tagline {
-    font-size: 11px;
-    color: var(--gray);
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 1px;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 28px;
-    list-style: none;
-  }
-
-  .footer-links a {
-    font-size: 12px;
-    color: var(--gray);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .footer-links a:hover { color: var(--beige); }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .hero-content > * {
-    animation: fadeUp 0.7s ease backwards;
-  }
-
-  .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
-  .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
-  .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
-  .hero-content > *:nth-child(4) { animation-delay: 0.4s; }
-  .hero-content > *:nth-child(5) { animation-delay: 0.5s; }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--black); }
-  ::-webkit-scrollbar-thumb { background: rgba(210,184,154,0.3); }
-
-  /* RESPONSIVE */
-  @media (max-width: 1100px) {
-    .hero-visual { display: none; }
-    nav { padding: 16px 24px; }
-    .nav-links { display: none; }
-    .hero, .problema, .modulos, .auto, .testimonios, .planes, .cta-final { padding: 80px 24px; }
-    footer { padding: 32px 24px; flex-direction: column; gap: 20px; text-align: center; }
-    .modulos-grid, .testi-grid, .planes-grid { grid-template-columns: 1fr; }
-    .pain-grid { grid-template-columns: 1fr 1fr; }
-    .auto { grid-template-columns: 1fr; gap: 48px; }
-    .section-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-    .section-header p { text-align: left; }
-  }
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#0B0B0B;
+  --beige:#D2B89A;
+  --beige2:#E8D5BE;
+  --beige3:#B89878;
+  --white:#F4F1ED;
+  --gray:#888;
+  --g1:#1A1A1A;
+  --g2:#242424;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:rgba(210,184,154,.3)}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 60px;
+  background:rgba(11,11,11,0);
+  backdrop-filter:blur(0px);
+  border-bottom:1px solid rgba(210,184,154,0);
+  transition:all .4s ease;
+}
+nav.scrolled{
+  background:rgba(11,11,11,.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(210,184,154,.1);
+}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--beige)}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:rgba(244,241,237,.5);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.4px;transition:color .2s}
+.nav-links a:hover{color:var(--beige)}
+.nav-btn{background:var(--beige);color:var(--black);border:none;padding:10px 24px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:12px;letter-spacing:.5px;cursor:pointer;transition:all .2s}
+.nav-btn:hover{background:var(--beige2);transform:translateY(-1px)}
+
+/* HERO */
+#hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;
+  overflow:hidden;
+}
+#canvas-bg{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  z-index:0;
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(11,11,11,.92) 40%,rgba(11,11,11,.3) 100%);
+  z-index:1;
+}
+.hero-content{
+  position:relative;z-index:2;
+  padding:0 60px;
+  max-width:780px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(210,184,154,.25);
+  padding:6px 16px;
+  font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--beige);margin-bottom:32px;
+  font-family:'DM Mono',monospace;
+  opacity:0;transform:translateY(10px);
+}
+.hero-badge-dot{
+  width:5px;height:5px;background:var(--beige);border-radius:50%;
+  animation:blink 1.8s infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+h1.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(72px,9vw,130px);
+  line-height:.9;letter-spacing:2px;
+  margin-bottom:28px;
+  overflow:hidden;
+}
+h1.hero-title .line{display:block;overflow:hidden}
+h1.hero-title .line-inner{display:block;transform:translateY(100%)}
+h1.hero-title span{color:var(--beige)}
+.hero-sub{
+  font-size:16px;line-height:1.7;
+  color:rgba(244,241,237,.55);
+  max-width:480px;margin-bottom:44px;font-weight:300;
+  opacity:0;transform:translateY(16px);
+}
+.hero-btns{
+  display:flex;gap:14px;align-items:center;margin-bottom:56px;
+  opacity:0;transform:translateY(16px);
+}
+.btn-p{
+  background:var(--beige);color:var(--black);border:none;
+  padding:15px 36px;font-family:'DM Sans',sans-serif;
+  font-weight:700;font-size:13px;letter-spacing:.5px;
+  cursor:pointer;transition:all .2s;text-decoration:none;
+  display:inline-block;
+}
+.btn-p:hover{background:var(--beige2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(210,184,154,.25)}
+.btn-s{
+  color:var(--white);border:1px solid rgba(244,241,237,.2);
+  padding:15px 36px;font-family:'DM Sans',sans-serif;
+  font-weight:500;font-size:13px;letter-spacing:.5px;
+  background:transparent;cursor:pointer;transition:all .2s;
+  text-decoration:none;display:inline-block;
+}
+.btn-s:hover{border-color:var(--beige);color:var(--beige)}
+.hero-pills{display:flex;gap:20px;flex-wrap:wrap;opacity:0;transform:translateY(16px)}
+.pill{
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;color:rgba(244,241,237,.45);
+}
+.pill::before{content:'✓';color:var(--beige);font-weight:700;font-size:11px}
+.scroll-hint{
+  position:absolute;bottom:36px;left:60px;z-index:2;
+  display:flex;align-items:center;gap:12px;
+  font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:2px;color:rgba(244,241,237,.3);
+  opacity:0;
+}
+.scroll-line{
+  width:40px;height:1px;background:rgba(210,184,154,.3);
+  overflow:hidden;position:relative;
+}
+.scroll-line::after{
+  content:'';position:absolute;left:-100%;top:0;
+  width:100%;height:100%;background:var(--beige);
+  animation:scanline 2s ease-in-out infinite;
+}
+@keyframes scanline{0%{left:-100%}100%{left:100%}}
+
+/* COUNTER STATS */
+.stats-bar{
+  background:var(--g1);
+  border-top:1px solid rgba(210,184,154,.08);
+  border-bottom:1px solid rgba(210,184,154,.08);
+  display:flex;justify-content:center;
+  padding:48px 60px;gap:80px;
+}
+.stat-item{text-align:center}
+.stat-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:52px;letter-spacing:1px;
+  color:var(--beige);display:block;
+  line-height:1;margin-bottom:8px;
+}
+.stat-label{font-size:12px;color:var(--gray);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+
+/* SECTION COMMON */
+.sec-label{
+  font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--beige);margin-bottom:16px;display:block;
+}
+.sec-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(44px,5.5vw,72px);
+  line-height:.95;letter-spacing:1.5px;
+}
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* PROBLEMA */
+#problema{
+  padding:120px 60px;
+  position:relative;overflow:hidden;
+  background:var(--g1);
+}
+#problema::after{
+  content:'?';
+  position:absolute;font-family:'Bebas Neue',sans-serif;
+  font-size:600px;color:rgba(210,184,154,.025);
+  right:-60px;top:50%;transform:translateY(-50%);
+  line-height:1;pointer-events:none;
+  animation:float 6s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(-50%) rotate(-3deg)}50%{transform:translateY(-52%) rotate(3deg)}}
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:56px}
+.pain-card{
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.05);
+  padding:32px;cursor:default;
+  transition:all .3s;
+  position:relative;overflow:hidden;
+}
+.pain-card::before{
+  content:'';position:absolute;
+  inset:0;background:linear-gradient(135deg,rgba(210,184,154,.06) 0%,transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.pain-card:hover::before{opacity:1}
+.pain-card:hover{border-color:rgba(210,184,154,.2);transform:translateY(-2px)}
+.pain-ico{font-size:26px;margin-bottom:16px;display:block}
+.pain-txt{font-size:14px;color:rgba(244,241,237,.55);line-height:1.6}
+
+/* MODULES */
+#modulos{padding:120px 60px}
+.mod-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:64px}
+.mod-header p{font-size:14px;color:var(--gray);max-width:260px;text-align:right;line-height:1.7}
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.mod-card{
+  background:var(--g1);
+  border:1px solid rgba(255,255,255,.04);
+  padding:40px 34px;
+  position:relative;overflow:hidden;
+  transition:all .35s;
+}
+.mod-card::after{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:var(--beige);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .35s;
+}
+.mod-card:hover::after{transform:scaleX(1)}
+.mod-card:hover{background:rgba(210,184,154,.04);border-color:rgba(210,184,154,.12);transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.mod-ico{font-size:28px;margin-bottom:18px;display:block}
+.mod-ttl{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:18px}
+.mod-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.mod-list li{font-size:13px;color:rgba(244,241,237,.45);display:flex;align-items:center;gap:8px}
+.mod-list li::before{content:'';width:3px;height:3px;background:var(--beige);border-radius:50%;flex-shrink:0}
+
+/* 3D PARALLAX SECTION */
+#parallax-break{
+  height:320px;position:relative;overflow:hidden;
+  background:var(--black);
+  display:flex;align-items:center;justify-content:center;
+}
+#canvas-mid{position:absolute;inset:0;width:100%;height:100%}
+.parallax-text{
+  position:relative;z-index:2;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(60px,8vw,110px);
+  letter-spacing:4px;text-align:center;
+  color:rgba(244,241,237,.06);
+  text-shadow:0 0 80px rgba(210,184,154,.15);
+  pointer-events:none;
+  white-space:nowrap;
+}
+
+/* AUTOMATIZACIONES */
+#auto{
+  padding:120px 60px;background:var(--g1);
+  border-top:1px solid rgba(210,184,154,.07);
+  border-bottom:1px solid rgba(210,184,154,.07);
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+.auto-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
+.auto-tag{
+  background:rgba(210,184,154,.07);
+  border:1px solid rgba(210,184,154,.18);
+  padding:7px 14px;font-size:11px;color:var(--beige);
+  font-family:'DM Mono',monospace;letter-spacing:.3px;
+  transition:all .2s;cursor:default;
+}
+.auto-tag:hover{background:rgba(210,184,154,.14)}
+.flow-wrap{display:flex;flex-direction:column;gap:0}
+.flow-node{
+  display:flex;align-items:center;gap:16px;
+  background:var(--black);
+  border:1px solid rgba(210,184,154,.1);
+  padding:18px 22px;
+  transition:all .25s;
+  position:relative;
+}
+.flow-node:hover{border-color:rgba(210,184,154,.28);background:rgba(210,184,154,.03)}
+.flow-node-ico{font-size:18px;flex-shrink:0}
+.flow-node-body{flex:1}
+.flow-node-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.flow-node-sub{font-size:11px;color:var(--gray)}
+.flow-node-badge{
+  font-family:'DM Mono',monospace;font-size:8px;
+  padding:3px 8px;border-radius:20px;white-space:nowrap;
+}
+.badge-ok{background:rgba(100,200,120,.12);color:#6DC}
+.badge-warn{background:rgba(210,184,154,.15);color:var(--beige)}
+.flow-line{
+  width:1px;height:20px;
+  background:rgba(210,184,154,.15);margin-left:33px;
+  position:relative;overflow:hidden;
+}
+.flow-line::after{
+  content:'';position:absolute;top:-100%;left:0;
+  width:100%;height:100%;
+  background:linear-gradient(180deg,transparent,var(--beige),transparent);
+  animation:flowdown 2s ease-in-out infinite;
+}
+.flow-line:nth-child(2)::after{animation-delay:.3s}
+.flow-line:nth-child(4)::after{animation-delay:.6s}
+@keyframes flowdown{0%{top:-100%}100%{top:100%}}
+
+/* TESTIMONIOS */
+#testi{padding:120px 60px}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:56px}
+.testi-card{
+  background:var(--g1);
+  border:1px solid rgba(255,255,255,.04);
+  padding:40px;position:relative;
+  transition:all .3s;
+}
+.testi-card:hover{border-color:rgba(210,184,154,.15);transform:translateY(-3px);box-shadow:0 24px 64px rgba(0,0,0,.5)}
+.testi-q{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:72px;color:rgba(210,184,154,.12);
+  line-height:1;position:absolute;top:16px;right:28px;
+}
+.testi-txt{
+  font-size:15px;line-height:1.75;
+  color:rgba(244,241,237,.72);margin-bottom:28px;
+  font-style:italic;font-weight:300;
+}
+.testi-name{
+  font-size:11px;color:var(--beige);font-weight:600;
+  letter-spacing:.5px;text-transform:uppercase;
+  font-family:'DM Mono',monospace;
+}
+.testi-role{font-size:11px;color:var(--gray);margin-top:4px}
+
+/* PLANES */
+#planes{
+  padding:120px 60px;
+  background:var(--g1);
+  border-top:1px solid rgba(210,184,154,.07);
+}
+#planes .sec-title{text-align:center;margin-bottom:64px}
+.planes-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2px;max-width:980px;margin:0 auto;
+}
+.plan-card{
+  background:var(--black);
+  border:1px solid rgba(255,255,255,.05);
+  padding:40px 34px;position:relative;
+  transition:all .3s;
+}
+.plan-card.hot{
+  background:rgba(210,184,154,.05);
+  border-color:rgba(210,184,154,.28);
+}
+.plan-card.hot::before{
+  content:'MÁS POPULAR';position:absolute;
+  top:-1px;left:50%;transform:translateX(-50%);
+  background:var(--beige);color:var(--black);
+  font-size:8px;font-weight:700;
+  font-family:'DM Mono',monospace;letter-spacing:2px;
+  padding:5px 14px;
+}
+.plan-card:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.plan-name{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;margin-bottom:8px}
+.plan-desc{font-size:12px;color:var(--gray);margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.05);line-height:1.6}
+.plan-feats{list-style:none;margin-bottom:32px;display:flex;flex-direction:column;gap:10px}
+.plan-feats li{font-size:13px;color:rgba(244,241,237,.6);display:flex;align-items:center;gap:8px}
+.plan-feats li::before{content:'✓';color:var(--beige);font-size:11px;font-weight:700;flex-shrink:0}
+.plan-btn{
+  width:100%;padding:13px;
+  font-family:'DM Sans',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:.5px;cursor:pointer;
+  transition:all .2s;
+  border:1px solid rgba(210,184,154,.25);
+  background:transparent;color:var(--beige);
+}
+.plan-btn:hover{background:rgba(210,184,154,.1)}
+.plan-card.hot .plan-btn{background:var(--beige);color:var(--black);border-color:var(--beige)}
+.plan-card.hot .plan-btn:hover{background:var(--beige2)}
+
+/* CTA FINAL */
+#cta{
+  padding:140px 60px;text-align:center;
+  position:relative;overflow:hidden;
+}
+#canvas-cta{position:absolute;inset:0;width:100%;height:100%}
+.cta-inner{position:relative;z-index:2}
+.cta-ttl{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(56px,8vw,108px);
+  line-height:.92;letter-spacing:2px;margin-bottom:24px;
+}
+.cta-ttl span{color:var(--beige)}
+.cta-sub{
+  font-size:16px;color:rgba(244,241,237,.45);
+  max-width:440px;margin:0 auto 48px;line-height:1.7;
+}
+.cta-acts{display:flex;gap:16px;justify-content:center;align-items:center;margin-bottom:40px}
+.cta-link{
+  display:flex;align-items:center;gap:6px;
+  font-size:13px;color:var(--gray);text-decoration:none;transition:color .2s;
+}
+.cta-link:hover{color:var(--beige)}
+.cta-domain{
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:rgba(244,241,237,.2);letter-spacing:1.5px;
+  margin-top:8px;
+}
+
+/* FOOTER */
+footer{
+  border-top:1px solid rgba(210,184,154,.08);
+  padding:36px 60px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.ft-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--beige)}
+.ft-tag{font-size:10px;color:rgba(244,241,237,.25);font-family:'DM Mono',monospace;letter-spacing:1px;margin-top:4px}
+.ft-links{display:flex;gap:24px;list-style:none}
+.ft-links a{font-size:12px;color:var(--gray);text-decoration:none;transition:color .2s}
+.ft-links a:hover{color:var(--beige)}
+.ft-copy{font-size:11px;color:rgba(244,241,237,.2)}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  nav{padding:14px 24px}
+  .nav-links,.scroll-hint{display:none}
+  #hero .hero-content,#problema,#modulos,#auto,#testi,#planes,#cta,footer{padding-left:24px;padding-right:24px}
+  .stats-bar{gap:32px;flex-wrap:wrap;padding:36px 24px}
+  .pain-grid,.mod-grid,.testi-grid,.planes-grid{grid-template-columns:1fr}
+  #auto{grid-template-columns:1fr;gap:48px}
+  .mod-header{flex-direction:column;align-items:flex-start;gap:12px}
+  .mod-header p{text-align:left}
+  footer{flex-direction:column;gap:18px;text-align:center;padding:28px 24px}
+}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
+<nav id="nav">
   <div class="nav-logo">SMART GYM CR</div>
   <ul class="nav-links">
-    <li><a href="#funcionalidades">Funcionalidades</a></li>
-    <li><a href="#automatizaciones">Automatizaciones</a></li>
+    <li><a href="#modulos">Funcionalidades</a></li>
+    <li><a href="#auto">Automatizaciones</a></li>
     <li><a href="#planes">Planes</a></li>
-    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="#cta">Demo</a></li>
   </ul>
-  <button class="nav-cta">Solicitar Demo</button>
+  <button class="nav-btn">Solicitar Demo</button>
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="inicio">
-  <div class="hero-bg"></div>
-  <div class="hero-grid-lines"></div>
-
+<section id="hero">
+  <canvas id="canvas-bg"></canvas>
+  <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-tag">Plataforma para Gimnasios · Costa Rica</div>
-    <h1>GESTIONA TU<br>GIMNASIO<br><span>DE FORMA</span><br>INTELIGENTE.</h1>
-    <p class="hero-sub">Controla membresías, cobros, asistencia, rutinas, entrenadores y múltiples sedes desde una sola plataforma diseñada para gimnasios de Costa Rica.</p>
-    <div class="hero-actions">
-      <a href="#contacto" class="btn-primary">Solicitar Demo</a>
-      <a href="#funcionalidades" class="btn-secondary">Ver funcionalidades</a>
+    <div class="hero-badge" id="hbadge">
+      <span class="hero-badge-dot"></span>
+      Plataforma para Gimnasios · Costa Rica
     </div>
-    <div class="hero-benefits">
-      <span class="hero-benefit">Control de membresías</span>
-      <span class="hero-benefit">Cobro de mensualidades</span>
-      <span class="hero-benefit">Control de acceso</span>
-      <span class="hero-benefit">Portal para clientes</span>
-      <span class="hero-benefit">Multi sucursal</span>
-      <span class="hero-benefit">Reportes en tiempo real</span>
+    <h1 class="hero-title" id="htitle">
+      <span class="line"><span class="line-inner">GESTIONA</span></span>
+      <span class="line"><span class="line-inner">TU <span style="color:var(--beige)">GIMNASIO</span></span></span>
+      <span class="line"><span class="line-inner">DE FORMA</span></span>
+      <span class="line"><span class="line-inner" style="color:var(--beige)">INTELIGENTE.</span></span>
+    </h1>
+    <p class="hero-sub" id="hsub">Controla membresías, cobros, asistencia, rutinas, entrenadores y múltiples sedes desde una sola plataforma diseñada para gimnasios de Costa Rica y Latinoamérica.</p>
+    <div class="hero-btns" id="hbtns">
+      <a href="#cta" class="btn-p">Solicitar Demo</a>
+      <a href="#modulos" class="btn-s">Ver funcionalidades</a>
+    </div>
+    <div class="hero-pills" id="hpills">
+      <span class="pill">Control de membresías</span>
+      <span class="pill">Cobro de mensualidades</span>
+      <span class="pill">Control de acceso</span>
+      <span class="pill">Portal para clientes</span>
+      <span class="pill">Multi sucursal</span>
+      <span class="pill">Reportes en tiempo real</span>
     </div>
   </div>
-
-  <!-- DASHBOARD MOCK -->
-  <div class="hero-visual">
-    <div class="dashboard-mock">
-      <div class="mock-topbar">
-        <div class="mock-dot" style="background:#FF5F57"></div>
-        <div class="mock-dot" style="background:#FFBD2E"></div>
-        <div class="mock-dot" style="background:#28CA41"></div>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);margin-left:8px;">Dashboard · Julio 2025</span>
-      </div>
-
-      <div class="mock-stat-grid">
-        <div class="mock-stat">
-          <div class="mock-stat-label">Clientes Activos</div>
-          <div class="mock-stat-val">347</div>
-        </div>
-        <div class="mock-stat">
-          <div class="mock-stat-label">Ingresos / mes</div>
-          <div class="mock-stat-val">₡2.8M</div>
-        </div>
-        <div class="mock-stat">
-          <div class="mock-stat-label">Por vencer</div>
-          <div class="mock-stat-val" style="color:#F8C471;">28</div>
-        </div>
-        <div class="mock-stat">
-          <div class="mock-stat-label">Morosidad</div>
-          <div class="mock-stat-val" style="color:#F88;">12</div>
-        </div>
-      </div>
-
-      <div class="mock-bar-section">
-        <div class="mock-bar-label">Asistencia semanal</div>
-        <div class="mock-bars">
-          <div class="mock-bar"><div class="mock-bar-fill" style="height:55%"></div></div>
-          <div class="mock-bar"><div class="mock-bar-fill" style="height:80%"></div></div>
-          <div class="mock-bar"><div class="mock-bar-fill" style="height:70%"></div></div>
-          <div class="mock-bar"><div class="mock-bar-fill" style="height:95%"></div></div>
-          <div class="mock-bar"><div class="mock-bar-fill" style="height:85%"></div></div>
-          <div class="mock-bar"><div class="mock-bar-fill" style="height:60%"></div></div>
-          <div class="mock-bar"><div class="mock-bar-fill" style="height:40%"></div></div>
-        </div>
-      </div>
-
-      <div>
-        <div class="mock-list-item">
-          <span class="mock-list-name">Ana Rodríguez</span>
-          <span class="mock-badge badge-orange">Vence en 3 días</span>
-        </div>
-        <div class="mock-list-item">
-          <span class="mock-list-name">Carlos Mora</span>
-          <span class="mock-badge badge-green">Activo</span>
-        </div>
-        <div class="mock-list-item">
-          <span class="mock-list-name">Luis Jiménez</span>
-          <span class="mock-badge badge-red">Moroso</span>
-        </div>
-        <div class="mock-list-item" style="border:none">
-          <span class="mock-list-name">María Quesada</span>
-          <span class="mock-badge badge-green">Activo</span>
-        </div>
-      </div>
-    </div>
+  <div class="scroll-hint" id="scroll-hint">
+    <div class="scroll-line"></div>
+    SCROLL
   </div>
 </section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-num" data-target="347">0</span>
+    <span class="stat-label">Clientes activos promedio</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-target="70">0</span>
+    <span class="stat-label">% reducción administrativa</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-target="6">0</span>
+    <span class="stat-label">Módulos integrados</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num" data-target="24">0</span>
+    <span class="stat-label">Horas de soporte</span>
+  </div>
+</div>
 
 <!-- PROBLEMA -->
-<section class="problema">
-  <div class="section-label">El Problema</div>
-  <h2>¿TODAVÍA ADMINISTRAS TU GIMNASIO CON EXCEL Y WHATSAPP?</h2>
+<section id="problema">
+  <span class="sec-label reveal">El Problema</span>
+  <h2 class="sec-title reveal">¿TODAVÍA ADMINISTRAS<br>TU GIMNASIO CON<br>EXCEL Y WHATSAPP?</h2>
   <div class="pain-grid">
-    <div class="pain-item">
-      <span class="pain-icon">📋</span>
-      <p class="pain-text">Membresías vencidas sin seguimiento automático</p>
-    </div>
-    <div class="pain-item">
-      <span class="pain-icon">💸</span>
-      <p class="pain-text">Clientes morosos que pasan desapercibidos</p>
-    </div>
-    <div class="pain-item">
-      <span class="pain-icon">🚪</span>
-      <p class="pain-text">Falta de control real sobre quién entra al gimnasio</p>
-    </div>
-    <div class="pain-item">
-      <span class="pain-icon">📄</span>
-      <p class="pain-text">Rutinas impresas que se pierden o desactualizan</p>
-    </div>
-    <div class="pain-item">
-      <span class="pain-icon">🔢</span>
-      <p class="pain-text">Cobros manuales con alto riesgo de error</p>
-    </div>
-    <div class="pain-item">
-      <span class="pain-icon">🗂️</span>
-      <p class="pain-text">Información dispersa entre WhatsApp, Excel y papel</p>
-    </div>
-  </div>
-  <div class="problema-cta">
-    <div class="problema-cta-text">
-      <span>SMART GYM CR centraliza toda la operación</span> en una sola plataforma. Automatiza el 70% de las tareas administrativas de tu gimnasio.
-    </div>
-    <a href="#contacto" class="btn-primary" style="white-space:nowrap;flex-shrink:0;">Quiero saber más</a>
+    <div class="pain-card reveal"><span class="pain-ico">📋</span><p class="pain-txt">Membresías vencidas sin seguimiento automático que generan pérdida de ingresos mes a mes</p></div>
+    <div class="pain-card reveal"><span class="pain-ico">💸</span><p class="pain-txt">Clientes morosos que pasan desapercibidos porque no hay un sistema de alertas centralizado</p></div>
+    <div class="pain-card reveal"><span class="pain-ico">🚪</span><p class="pain-txt">Sin control real de quién entra al gimnasio ni si su membresía está vigente al momento del acceso</p></div>
+    <div class="pain-card reveal"><span class="pain-ico">📄</span><p class="pain-txt">Rutinas impresas que se pierden, se desactualizan y no permiten hacer seguimiento del progreso</p></div>
+    <div class="pain-card reveal"><span class="pain-ico">🔢</span><p class="pain-txt">Cobros manuales con alto riesgo de error, sin historial claro ni reportes de ingresos consolidados</p></div>
+    <div class="pain-card reveal"><span class="pain-ico">🗂️</span><p class="pain-txt">Información dispersa entre WhatsApp, Excel, papel y la memoria del administrador</p></div>
   </div>
 </section>
 
-<!-- MÓDULOS -->
-<section class="modulos" id="funcionalidades">
-  <div class="section-header">
-    <div>
-      <div class="section-label">Funcionalidades</div>
-      <h2>TODO LO QUE<br>NECESITAS</h2>
-    </div>
-    <p>Una plataforma completa para la gestión integral de tu gimnasio o cadena de gimnasios.</p>
-  </div>
+<!-- PARALLAX BREAK -->
+<div id="parallax-break">
+  <canvas id="canvas-mid"></canvas>
+  <div class="parallax-text">SMART · GYM · CR</div>
+</div>
 
-  <div class="modulos-grid">
-    <div class="modulo-card">
-      <span class="modulo-icon">💳</span>
-      <div class="modulo-title">Membresías y Cobros</div>
-      <ul class="modulo-features">
-        <li>Registro y control de membresías</li>
-        <li>Vencimientos y alertas automáticas</li>
-        <li>Clientes morosos en tiempo real</li>
-        <li>Historial de pagos completo</li>
-        <li>Renovaciones rápidas con un clic</li>
-      </ul>
+<!-- MÓDULOS -->
+<section id="modulos">
+  <div class="mod-header reveal">
+    <div>
+      <span class="sec-label">Funcionalidades</span>
+      <h2 class="sec-title">TODO LO QUE<br>NECESITAS</h2>
     </div>
-    <div class="modulo-card">
-      <span class="modulo-icon">📲</span>
-      <div class="modulo-title">Control de Asistencia</div>
-      <ul class="modulo-features">
-        <li>Check-in rápido por QR o código</li>
-        <li>Control por día y horario</li>
-        <li>Historial de visitas por cliente</li>
-        <li>Reportes de asistencia detallados</li>
-        <li>Acceso únicamente con membresía activa</li>
-      </ul>
-    </div>
-    <div class="modulo-card">
-      <span class="modulo-icon">🏋️</span>
-      <div class="modulo-title">Rutinas y Seguimiento</div>
-      <ul class="modulo-features">
-        <li>Rutinas personalizadas por cliente</li>
-        <li>Fotografías de ejercicios</li>
-        <li>Mediciones corporales y evolución</li>
-        <li>Objetivos físicos y progreso</li>
-        <li>Historial completo del cliente</li>
-      </ul>
-    </div>
-    <div class="modulo-card">
-      <span class="modulo-icon">👤</span>
-      <div class="modulo-title">Portal del Cliente</div>
-      <ul class="modulo-features">
-        <li>Consultar rutina desde el celular</li>
-        <li>Revisar pagos y estado de membresía</li>
-        <li>Ver historial de asistencia</li>
-        <li>Seguimiento de progreso físico</li>
-        <li>Notificaciones importantes</li>
-      </ul>
-    </div>
-    <div class="modulo-card">
-      <span class="modulo-icon">👨‍💼</span>
-      <div class="modulo-title">Gestión de Personal</div>
-      <ul class="modulo-features">
-        <li>Registro de entrenadores y empleados</li>
-        <li>Roles y permisos por usuario</li>
-        <li>Control de accesos por sede</li>
-        <li>Registro de actividades</li>
-        <li>Gestión centralizada del equipo</li>
-      </ul>
-    </div>
-    <div class="modulo-card">
-      <span class="modulo-icon">🏢</span>
-      <div class="modulo-title">Multi-sede y Multi-empresa</div>
-      <ul class="modulo-features">
-        <li>Administra varias sucursales</li>
-        <li>Información centralizada y consolidada</li>
-        <li>Reportes por sede e individuales</li>
-        <li>Usuarios y permisos por sede</li>
-        <li>Estadísticas comparativas</li>
-      </ul>
-    </div>
+    <p>Una plataforma completa para la gestión integral de tu gimnasio o cadena.</p>
+  </div>
+  <div class="mod-grid">
+    <div class="mod-card reveal"><span class="mod-ico">💳</span><div class="mod-ttl">Membresías y Cobros</div><ul class="mod-list"><li>Registro y control de membresías</li><li>Vencimientos y alertas automáticas</li><li>Clientes morosos en tiempo real</li><li>Historial de pagos completo</li><li>Renovaciones con un clic</li></ul></div>
+    <div class="mod-card reveal"><span class="mod-ico">📲</span><div class="mod-ttl">Control de Asistencia</div><ul class="mod-list"><li>Check-in rápido por QR o código</li><li>Control por día y horario</li><li>Historial de visitas por cliente</li><li>Reportes de asistencia detallados</li><li>Acceso sólo con membresía activa</li></ul></div>
+    <div class="mod-card reveal"><span class="mod-ico">🏋️</span><div class="mod-ttl">Rutinas y Seguimiento</div><ul class="mod-list"><li>Rutinas personalizadas por cliente</li><li>Fotografías de ejercicios</li><li>Mediciones corporales y evolución</li><li>Objetivos físicos y progreso</li><li>Historial completo del cliente</li></ul></div>
+    <div class="mod-card reveal"><span class="mod-ico">👤</span><div class="mod-ttl">Portal del Cliente</div><ul class="mod-list"><li>Consultar rutina desde el celular</li><li>Revisar pagos y estado de membresía</li><li>Ver historial de asistencia</li><li>Seguimiento de progreso físico</li><li>Notificaciones importantes</li></ul></div>
+    <div class="mod-card reveal"><span class="mod-ico">👨‍💼</span><div class="mod-ttl">Gestión de Personal</div><ul class="mod-list"><li>Registro de entrenadores y empleados</li><li>Roles y permisos por usuario</li><li>Control de accesos por sede</li><li>Registro de actividades</li><li>Gestión centralizada del equipo</li></ul></div>
+    <div class="mod-card reveal"><span class="mod-ico">🏢</span><div class="mod-ttl">Multi-sede</div><ul class="mod-list"><li>Administra varias sucursales</li><li>Información centralizada</li><li>Reportes por sede consolidados</li><li>Usuarios y permisos por sede</li><li>Estadísticas comparativas</li></ul></div>
   </div>
 </section>
 
 <!-- AUTOMATIZACIONES -->
-<section class="auto" id="automatizaciones">
+<section id="auto">
   <div class="auto-left">
-    <div class="section-label">Automatizaciones</div>
-    <h2>SMART GYM CR<br>TRABAJA POR TI.</h2>
-    <p class="auto-sub">Automatiza las tareas repetitivas que consumen tu tiempo todos los días. Enfócate en tus clientes, nosotros nos encargamos del resto.</p>
-    <div class="auto-tags">
+    <span class="sec-label reveal">Automatizaciones</span>
+    <h2 class="sec-title reveal">SMART GYM CR<br>TRABAJA<br>POR TI.</h2>
+    <p style="font-size:15px;color:rgba(244,241,237,.45);line-height:1.75;margin-top:16px;max-width:400px" class="reveal">Automatiza las tareas repetitivas que consumen tu tiempo todos los días. Enfócate en tus clientes, nosotros nos encargamos del resto.</p>
+    <div class="auto-tags reveal">
       <span class="auto-tag">🎂 Cumpleaños</span>
       <span class="auto-tag">📅 Membresías por vencer</span>
       <span class="auto-tag">⚠️ Clientes morosos</span>
@@ -1185,171 +557,392 @@
       <span class="auto-tag">📈 Clientes inactivos</span>
     </div>
   </div>
-  <div class="auto-visual">
-    <div class="flow-card">
-      <span class="flow-card-icon">📅</span>
-      <div class="flow-card-content">
-        <div class="flow-card-title">Membresía próxima a vencer</div>
-        <div class="flow-card-desc">Ana Rodríguez · Vence en 3 días</div>
-      </div>
-      <span class="flow-card-status">ACTIVO</span>
-    </div>
-    <div class="flow-connector"></div>
-    <div class="flow-card">
-      <span class="flow-card-icon">📲</span>
-      <div class="flow-card-content">
-        <div class="flow-card-title">Mensaje automático enviado</div>
-        <div class="flow-card-desc">WhatsApp / Email · Recordatorio de renovación</div>
-      </div>
-      <span class="flow-card-status">ENVIADO</span>
-    </div>
-    <div class="flow-connector"></div>
-    <div class="flow-card">
-      <span class="flow-card-icon">💰</span>
-      <div class="flow-card-content">
-        <div class="flow-card-title">Cobro registrado</div>
-        <div class="flow-card-desc">₡35,000 · Plan Mensual · Renovado</div>
-      </div>
-      <span class="flow-card-status">PAGADO</span>
-    </div>
-    <div class="flow-connector"></div>
-    <div class="flow-card">
-      <span class="flow-card-icon">✅</span>
-      <div class="flow-card-content">
-        <div class="flow-card-title">Membresía renovada automáticamente</div>
-        <div class="flow-card-desc">Nuevo vencimiento: 15 de Agosto 2025</div>
-      </div>
-      <span class="flow-card-status">LISTO</span>
-    </div>
+  <div class="flow-wrap reveal">
+    <div class="flow-node"><span class="flow-node-ico">📅</span><div class="flow-node-body"><div class="flow-node-title">Membresía próxima a vencer</div><div class="flow-node-sub">Ana Rodríguez · Vence en 3 días</div></div><span class="flow-node-badge badge-warn">DETECTADO</span></div>
+    <div class="flow-line"></div>
+    <div class="flow-node"><span class="flow-node-ico">📲</span><div class="flow-node-body"><div class="flow-node-title">Mensaje automático enviado</div><div class="flow-node-sub">WhatsApp / Email · Recordatorio renovación</div></div><span class="flow-node-badge badge-ok">ENVIADO</span></div>
+    <div class="flow-line"></div>
+    <div class="flow-node"><span class="flow-node-ico">💰</span><div class="flow-node-body"><div class="flow-node-title">Cobro registrado</div><div class="flow-node-sub">₡35,000 · Plan Mensual · Renovado</div></div><span class="flow-node-badge badge-ok">PAGADO</span></div>
+    <div class="flow-line"></div>
+    <div class="flow-node"><span class="flow-node-ico">✅</span><div class="flow-node-body"><div class="flow-node-title">Membresía renovada</div><div class="flow-node-sub">Nuevo vencimiento: 15 Agosto 2025</div></div><span class="flow-node-badge badge-ok">LISTO</span></div>
   </div>
 </section>
 
 <!-- TESTIMONIOS -->
-<section class="testimonios">
-  <div class="section-label">Testimonios</div>
-  <h2>LO QUE DICEN<br>NUESTROS CLIENTES</h2>
+<section id="testi">
+  <span class="sec-label reveal">Testimonios</span>
+  <h2 class="sec-title reveal">LO QUE DICEN<br>NUESTROS CLIENTES</h2>
   <div class="testi-grid">
-    <div class="testi-card">
-      <div class="testi-quote">"</div>
-      <p class="testi-text">Redujimos el tiempo administrativo en más de un 70%. Antes perdíamos horas en Excel, ahora todo está automatizado.</p>
-      <div class="testi-author">Propietario de Gimnasio</div>
-      <div class="testi-role">San José, Costa Rica</div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-quote">"</div>
-      <p class="testi-text">Ahora sabemos exactamente quién debe pagar y quién está por vencer. La morosidad bajó drásticamente desde que usamos la plataforma.</p>
-      <div class="testi-author">Administrador</div>
-      <div class="testi-role">Heredia, Costa Rica</div>
-    </div>
-    <div class="testi-card">
-      <div class="testi-quote">"</div>
-      <p class="testi-text">Los clientes aman consultar sus rutinas desde el celular. Es un diferenciador enorme frente a la competencia.</p>
-      <div class="testi-author">Entrenador</div>
-      <div class="testi-role">Cartago, Costa Rica</div>
-    </div>
+    <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-txt">Redujimos el tiempo administrativo en más de un 70%. Antes perdíamos horas en Excel, ahora todo está automatizado y funciona solo.</p><div class="testi-name">Propietario de Gimnasio</div><div class="testi-role">San José, Costa Rica</div></div>
+    <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-txt">Ahora sabemos exactamente quién debe pagar y quién está por vencer. La morosidad bajó drásticamente desde que implementamos la plataforma.</p><div class="testi-name">Administrador</div><div class="testi-role">Heredia, Costa Rica</div></div>
+    <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-txt">Los clientes aman consultar sus rutinas desde el celular. Es un diferenciador enorme frente a la competencia en nuestra zona.</p><div class="testi-name">Entrenador</div><div class="testi-role">Cartago, Costa Rica</div></div>
   </div>
 </section>
 
 <!-- PLANES -->
-<section class="planes" id="planes">
-  <div class="section-label" style="text-align:center;">Planes</div>
-  <h2>ELIGE TU PLAN</h2>
+<section id="planes">
+  <span class="sec-label" style="display:block;text-align:center" class="reveal">Planes</span>
+  <h2 class="sec-title reveal" style="text-align:center">ELIGE TU PLAN</h2>
   <div class="planes-grid">
-    <div class="plan-card">
-      <div class="plan-name">Básico</div>
-      <div class="plan-desc">Ideal para gimnasios pequeños que quieren empezar a digitalizar su operación.</div>
-      <ul class="plan-features">
-        <li>Hasta 200 clientes</li>
-        <li>Control de membresías</li>
-        <li>Registro de cobros</li>
-        <li>Control de asistencia</li>
-        <li>Reportes esenciales</li>
-      </ul>
-      <button class="plan-btn">Solicitar Demo</button>
-    </div>
-    <div class="plan-card featured">
-      <div class="plan-name">Profesional</div>
-      <div class="plan-desc">Para gimnasios en crecimiento que necesitan herramientas avanzadas de fidelización.</div>
-      <ul class="plan-features">
-        <li>Clientes ilimitados</li>
-        <li>Portal del cliente</li>
-        <li>Rutinas personalizadas</li>
-        <li>Mediciones corporales</li>
-        <li>Notificaciones automáticas</li>
-        <li>Reportería avanzada</li>
-      </ul>
-      <button class="plan-btn">Solicitar Demo</button>
-    </div>
-    <div class="plan-card">
-      <div class="plan-name">Enterprise</div>
-      <div class="plan-desc">Para cadenas y empresas con múltiples sucursales y equipos grandes.</div>
-      <ul class="plan-features">
-        <li>Multi sede y multi empresa</li>
-        <li>Usuarios ilimitados</li>
-        <li>Reportería consolidada</li>
-        <li>Roles y permisos avanzados</li>
-        <li>Soporte prioritario</li>
-        <li>Configuración personalizada</li>
-      </ul>
-      <button class="plan-btn">Contactar Ventas</button>
-    </div>
+    <div class="plan-card reveal"><div class="plan-name">Básico</div><div class="plan-desc">Para gimnasios pequeños que quieren empezar a digitalizar su operación.</div><ul class="plan-feats"><li>Hasta 200 clientes</li><li>Control de membresías</li><li>Registro de cobros</li><li>Control de asistencia</li><li>Reportes esenciales</li></ul><button class="plan-btn">Solicitar Demo</button></div>
+    <div class="plan-card hot reveal"><div class="plan-name">Profesional</div><div class="plan-desc">Para gimnasios en crecimiento con herramientas avanzadas de fidelización.</div><ul class="plan-feats"><li>Clientes ilimitados</li><li>Portal del cliente</li><li>Rutinas personalizadas</li><li>Mediciones corporales</li><li>Notificaciones automáticas</li><li>Reportería avanzada</li></ul><button class="plan-btn">Solicitar Demo</button></div>
+    <div class="plan-card reveal"><div class="plan-name">Enterprise</div><div class="plan-desc">Para cadenas y empresas con múltiples sucursales y equipos grandes.</div><ul class="plan-feats"><li>Multi sede y multi empresa</li><li>Usuarios ilimitados</li><li>Reportería consolidada</li><li>Soporte prioritario</li><li>Configuración personalizada</li></ul><button class="plan-btn">Contactar Ventas</button></div>
   </div>
 </section>
 
 <!-- CTA FINAL -->
-<section class="cta-final" id="contacto">
-  <div class="cta-final-inner">
-    <div class="section-label" style="text-align:center;">¿Listo para empezar?</div>
-    <h2>LLEVA TU GIMNASIO<br>AL <span>SIGUIENTE</span><br>NIVEL.</h2>
-    <p>Administra clientes, membresías, entrenadores, pagos y sedes desde una sola plataforma diseñada para Costa Rica.</p>
-    <div class="cta-final-actions">
-      <a href="#" class="btn-primary">Solicitar Demostración</a>
-      <a href="tel:+50600000000" class="cta-contact">
-        <span>📞</span> Contáctanos directamente
-      </a>
+<section id="cta">
+  <canvas id="canvas-cta"></canvas>
+  <div class="cta-inner">
+    <span class="sec-label" style="display:block;text-align:center;margin-bottom:20px">¿Listo para empezar?</span>
+    <h2 class="cta-ttl">LLEVA TU<br>GIMNASIO AL<br><span>SIGUIENTE</span><br>NIVEL.</h2>
+    <p class="cta-sub">Administra clientes, membresías, entrenadores, pagos y sedes desde una sola plataforma.</p>
+    <div class="cta-acts">
+      <a href="#" class="btn-p">Solicitar Demostración</a>
+      <a href="tel:+50600000000" class="cta-link">📞 Contáctanos directamente</a>
     </div>
-    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gray);letter-spacing:1px;">
-      smartgymcr.com
-    </div>
+    <div class="cta-domain">smartgymcr.com</div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div>
-    <div class="footer-logo">SMART GYM CR</div>
-    <div class="footer-tagline" style="margin-top:6px;">La plataforma inteligente para tu gimnasio.</div>
-  </div>
-  <ul class="footer-links">
-    <li><a href="#funcionalidades">Funcionalidades</a></li>
-    <li><a href="#automatizaciones">Automatizaciones</a></li>
-    <li><a href="#planes">Planes</a></li>
-    <li><a href="#contacto">Demo</a></li>
-  </ul>
-  <div style="font-size:11px;color:var(--gray);">© 2025 Smart Gym CR · Todos los derechos reservados</div>
+  <div><div class="ft-logo">SMART GYM CR</div><div class="ft-tag">La plataforma inteligente para tu gimnasio.</div></div>
+  <ul class="ft-links"><li><a href="#modulos">Funcionalidades</a></li><li><a href="#auto">Automatizaciones</a></li><li><a href="#planes">Planes</a></li><li><a href="#cta">Demo</a></li></ul>
+  <div class="ft-copy">© 2025 Smart Gym CR · Todos los derechos reservados</div>
 </footer>
 
 <script>
-  // Subtle scroll animation for cards
-  const cards = document.querySelectorAll('.modulo-card, .testi-card, .plan-card, .pain-item');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }, 80 * (Array.from(cards).indexOf(entry.target) % 3));
-        observer.unobserve(entry.target);
+// ═══════════════════════════════
+// HERO 3D – Floating gym equipment shapes
+// ═══════════════════════════════
+(function(){
+  const canvas = document.getElementById('canvas-bg');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+  camera.position.z = 18;
+
+  function resize(){
+    const w = canvas.offsetWidth, h = canvas.offsetHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Ambient + directional light
+  scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+  const dLight = new THREE.DirectionalLight(0xD2B89A, 1.2);
+  dLight.position.set(5, 8, 5);
+  scene.add(dLight);
+  const dLight2 = new THREE.DirectionalLight(0x6688aa, 0.6);
+  dLight2.position.set(-5, -3, 3);
+  scene.add(dLight2);
+
+  // Materials
+  const matBeige = new THREE.MeshStandardMaterial({
+    color: 0xD2B89A, metalness: 0.7, roughness: 0.2,
+    transparent: true, opacity: 0.55
+  });
+  const matDark = new THREE.MeshStandardMaterial({
+    color: 0x2a2018, metalness: 0.8, roughness: 0.3,
+    transparent: true, opacity: 0.65
+  });
+  const matLine = new THREE.MeshStandardMaterial({
+    color: 0xD2B89A, metalness: 0.9, roughness: 0.1,
+    transparent: true, opacity: 0.3, wireframe: true
+  });
+
+  const objects = [];
+
+  function addObj(geo, mat, x, y, z, rx, ry, rz, sx=1, sy=1, sz=1){
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x,y,z);
+    m.rotation.set(rx,ry,rz);
+    m.scale.set(sx,sy,sz);
+    scene.add(m);
+    objects.push({m, baseX:x, baseY:y, speed:Math.random()*0.4+0.2, phase:Math.random()*Math.PI*2, rotSpeed:(Math.random()-.5)*0.008});
+    return m;
+  }
+
+  // Dumbbell shapes (cylinders + spheres)
+  function makeDumbbell(x,y,z,rot){
+    const g = new THREE.Group();
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,2.6,12), matBeige);
+    g.add(bar);
+    [-1.2,1.2].forEach(ox=>{
+      const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,0.32,16), matBeige.clone());
+      plate.position.x = ox;
+      plate.rotation.z = Math.PI/2;
+      g.add(plate);
+    });
+    g.position.set(x,y,z);
+    g.rotation.set(rot,rot*.7,rot*.3);
+    scene.add(g);
+    objects.push({m:g, baseX:x, baseY:y, speed:Math.random()*0.3+0.15, phase:Math.random()*Math.PI*2, rotSpeed:(Math.random()-.5)*0.005});
+  }
+
+  // Kettlebell shape
+  function makeKettlebell(x,y,z){
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.6,16,16), matDark);
+    g.add(body);
+    const handle = new THREE.Mesh(new THREE.TorusGeometry(0.38,0.06,8,20,Math.PI), matBeige);
+    handle.position.y = 0.65;
+    handle.rotation.z = Math.PI;
+    g.add(handle);
+    g.position.set(x,y,z);
+    scene.add(g);
+    objects.push({m:g, baseX:x, baseY:y, speed:Math.random()*0.25+0.1, phase:Math.random()*Math.PI*2, rotSpeed:(Math.random()-.5)*0.004});
+  }
+
+  // Plate / ring
+  function makePlate(x,y,z,scale=1){
+    const outer = new THREE.Mesh(new THREE.TorusGeometry(0.7*scale,0.18*scale,12,40), matBeige.clone());
+    outer.rotation.x = Math.random()*Math.PI;
+    outer.rotation.y = Math.random()*Math.PI;
+    scene.add(outer);
+    objects.push({m:outer, baseX:x, baseY:y, speed:Math.random()*0.35+0.2, phase:Math.random()*Math.PI*2, rotSpeed:(Math.random()-.5)*0.006});
+  }
+
+  // Geometric shapes for visual interest
+  function makeIco(x,y,z,scale=1){
+    const ico = new THREE.Mesh(new THREE.IcosahedronGeometry(0.5*scale,0), matLine.clone());
+    ico.position.set(x,y,z);
+    scene.add(ico);
+    objects.push({m:ico, baseX:x, baseY:y, speed:Math.random()*0.5+0.3, phase:Math.random()*Math.PI*2, rotSpeed:(Math.random()-.5)*0.012});
+  }
+
+  // Populate scene (right side focus)
+  makeDumbbell( 5, 1.5, -4, 0.5);
+  makeDumbbell( 7,-2, -6, 1.2);
+  makeDumbbell(10, 3, -8, 0.3);
+  makeDumbbell( 4,-3.5,-5, 0.9);
+  makeDumbbell( 9,-0.5,-7, 1.5);
+  makeKettlebell(6, 2, -5);
+  makeKettlebell(8,-1.5,-7);
+  makeKettlebell(3.5, 0.5, -3.5);
+  makePlate(5.5,-2.5,-4, 1.0);
+  makePlate(7.5, 1.5,-6, 0.8);
+  makePlate(10,-2,-9, 1.2);
+  makePlate(4, 3,-4, 0.7);
+  makeIco(6,-0.5,-3.5, 1.0);
+  makeIco(9, 2.5,-6, 1.3);
+  makeIco(4.5, 1,-5, 0.8);
+  makeIco(11,-1,-8, 1.1);
+
+  // Mouse parallax
+  let mx=0, my=0;
+  window.addEventListener('mousemove',e=>{
+    mx = (e.clientX/window.innerWidth-.5)*2;
+    my = (e.clientY/window.innerHeight-.5)*2;
+  });
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);
+    t += 0.01;
+    objects.forEach(o=>{
+      o.m.position.y = o.baseY + Math.sin(t*o.speed + o.phase)*0.6;
+      o.m.rotation.x += o.rotSpeed;
+      o.m.rotation.y += o.rotSpeed*1.3;
+    });
+    camera.position.x += (mx*1.5 - camera.position.x)*0.04;
+    camera.position.y += (-my*1.0 - camera.position.y)*0.04;
+    camera.lookAt(0,0,0);
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ═══════════════════════════════
+// MID PARALLAX – Particle field
+// ═══════════════════════════════
+(function(){
+  const canvas = document.getElementById('canvas-mid');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setClearColor(0x000000,0);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60,1,0.1,1000);
+  camera.position.z = 20;
+
+  function resize(){
+    const w = canvas.offsetWidth, h = canvas.offsetHeight;
+    renderer.setSize(w,h);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  // Particle grid
+  const count = 800;
+  const positions = new Float32Array(count*3);
+  const colors = new Float32Array(count*3);
+  for(let i=0;i<count;i++){
+    positions[i*3]   = (Math.random()-.5)*60;
+    positions[i*3+1] = (Math.random()-.5)*20;
+    positions[i*3+2] = (Math.random()-.5)*30;
+    const t = Math.random();
+    colors[i*3]   = 0.82+t*.1;
+    colors[i*3+1] = 0.72+t*.05;
+    colors[i*3+2] = 0.60+t*.05;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors,3));
+  const mat = new THREE.PointsMaterial({size:0.12, vertexColors:true, transparent:true, opacity:0.7});
+  scene.add(new THREE.Points(geo, mat));
+
+  let scrollY = 0;
+  window.addEventListener('scroll',()=>{ scrollY = window.scrollY; });
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);
+    t+=0.008;
+    camera.rotation.z = Math.sin(t*.3)*0.04;
+    camera.position.x = Math.sin(t*.2)*2;
+    renderer.render(scene,camera);
+  }
+  animate();
+})();
+
+// ═══════════════════════════════
+// CTA 3D – Orbiting rings
+// ═══════════════════════════════
+(function(){
+  const canvas = document.getElementById('canvas-cta');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setClearColor(0x000000,0);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50,1,0.1,1000);
+  camera.position.z = 18;
+
+  function resize(){
+    const w = canvas.offsetWidth, h = canvas.offsetHeight;
+    renderer.setSize(w,h);
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  scene.add(new THREE.AmbientLight(0xffffff,.4));
+  const l1 = new THREE.PointLight(0xD2B89A, 2, 30);
+  l1.position.set(5,5,5);
+  scene.add(l1);
+
+  const mat = new THREE.MeshStandardMaterial({
+    color:0xD2B89A, metalness:.85, roughness:.15,
+    transparent:true, opacity:.18
+  });
+
+  const rings = [];
+  [[4,.3],[5.5,.5],[7,.2],[9,.4],[11,.15]].forEach(([r,t])=>{
+    const geo = new THREE.TorusGeometry(r,0.04+t*.1,12,80);
+    const m = new THREE.Mesh(geo,mat.clone());
+    m.rotation.x = (Math.random()-.5)*Math.PI;
+    m.rotation.y = Math.random()*Math.PI;
+    scene.add(m);
+    rings.push({m, rx:(Math.random()-.5)*0.005, ry:(Math.random()-.5)*0.008});
+  });
+
+  // Center glow sphere
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(1.2,32,32),
+    new THREE.MeshStandardMaterial({color:0xD2B89A, metalness:.9, roughness:.05, transparent:true, opacity:.12})
+  );
+  scene.add(sphere);
+
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);
+    t+=0.006;
+    rings.forEach(r=>{ r.m.rotation.x+=r.rx; r.m.rotation.y+=r.ry; });
+    l1.position.x = Math.sin(t)*8;
+    l1.position.y = Math.cos(t*.7)*5;
+    sphere.rotation.y += 0.005;
+    renderer.render(scene,camera);
+  }
+  animate();
+})();
+
+// ═══════════════════════════════
+// GSAP ANIMATIONS
+// ═══════════════════════════════
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero entrance
+gsap.to('.line-inner', {
+  y:'0%', duration:1, ease:'power3.out',
+  stagger:0.1, delay:0.2
+});
+gsap.to(['#hbadge','#hsub','#hbtns','#hpills','#scroll-hint'], {
+  opacity:1, y:0, duration:.9, ease:'power2.out',
+  stagger:0.12, delay:0.5
+});
+
+// Nav scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:0.1, rootMargin:'0px 0px -40px 0px'});
+reveals.forEach((el,i)=>{ el.style.transitionDelay = (i%4)*.08+'s'; io.observe(el); });
+
+// Counter animation
+const counters = document.querySelectorAll('.stat-num');
+const counterIO = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const el = e.target;
+    const target = +el.dataset.target;
+    const suffix = target===70?'%':target===24?'/7':'';
+    gsap.to({val:0},{
+      val:target, duration:2, ease:'power2.out',
+      onUpdate:function(){
+        el.textContent = Math.round(this.targets()[0].val) + suffix;
       }
     });
-  }, { threshold: 0.1 });
-
-  cards.forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(24px)';
-    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    observer.observe(card);
+    counterIO.unobserve(el);
   });
+},{threshold:0.5});
+counters.forEach(c=>counterIO.observe(c));
+
+// Card hover magnetic effect
+document.querySelectorAll('.mod-card,.plan-card,.testi-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX-rect.left)/rect.width-.5;
+    const y = (e.clientY-rect.top)/rect.height-.5;
+    gsap.to(card,{
+      rotateY:x*5, rotateX:-y*5, duration:.4, ease:'power2.out',
+      transformPerspective:600
+    });
+  });
+  card.addEventListener('mouseleave',()=>{
+    gsap.to(card,{rotateY:0, rotateX:0, duration:.5, ease:'elastic.out(1,.5)'});
+  });
+});
 </script>
 </body>
 </html>
