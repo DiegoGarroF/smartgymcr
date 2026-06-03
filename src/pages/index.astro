@@ -1,0 +1,410 @@
+---
+import "../styles/landing.css";
+
+const pageTitle = "Smart Gym CR – La plataforma inteligente para tu gimnasio";
+const pageDescription = "Landing page de Smart Gym CR migrada a Astro para facilitar desarrollo, build y despliegue.";
+const phone = "50660658625";
+
+const createWhatsappLink = (message) => `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+const demoLink = createWhatsappLink(
+  "Hola,\n\nEstuve revisando el sitio web de Smart Gym CR y me llamó mucho la atención la plataforma. Me gustaría recibir más información sobre sus características, precios y el proceso de implementación."
+);
+const basicPlanLink = createWhatsappLink(
+  "Hola,\n\nEstuve revisando el sitio web de Smart Gym CR y me llamó mucho la atención la plataforma.\n\nMe gustaría empezar a utilizar el plan *Básico*. ¿Podrían indicarme cuáles son los pasos para comenzar y qué información necesitan para realizar la configuración inicial?\n\nQuedo atento a sus comentarios.\n\nMuchas gracias."
+);
+const proPlanLink = createWhatsappLink(
+  "Hola,\n\nEstuve revisando el sitio web de Smart Gym CR y me llamó mucho la atención la plataforma.\n\nMe gustaría empezar a utilizar el plan *Profesional*. ¿Podrían indicarme cuáles son los pasos para comenzar y qué información necesitan para realizar la configuración inicial?\n\nQuedo atento a sus comentarios.\n\nMuchas gracias."
+);
+const enterprisePlanLink = createWhatsappLink(
+  "Hola,\n\nEstuve revisando el sitio web de Smart Gym CR y me llamó mucho la atención la plataforma.\n\nMe gustaría empezar a utilizar el plan *Enterprise*. ¿Podrían indicarme cuáles son los pasos para comenzar y qué información necesitan para realizar la configuración inicial?\n\nQuedo atento a sus comentarios.\n\nMuchas gracias."
+);
+const footerWhatsappLink = createWhatsappLink(
+  "Hola, estuve revisando el sitio web del Administrador de gimasions Smart GYM y quisiera que me brinden mas informacion"
+);
+---
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={pageDescription} />
+    <title>{pageTitle}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <nav id="nav">
+      <div class="nav-logo">SMART GYM CR</div>
+      <ul class="nav-links">
+        <li><a href="#modulos">Funcionalidades</a></li>
+        <li><a href="#auto">Automatizaciones</a></li>
+        <li><a href="#planes">Planes</a></li>
+        <li><a href="#cta">Demo</a></li>
+      </ul>
+      <a href={demoLink} class="nav-btn" target="_blank" rel="noreferrer">Solicitar Demo</a>
+    </nav>
+
+    <div class="ticker-bar" aria-hidden="true">
+      <div class="ticker-track" id="ticker-track">
+        <span class="ticker-item"><span class="ticker-dot"></span>Check-in <b>Carlos Mora</b> · Sede Central · hace 2 min</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Membresía renovada <b>Ana Rodríguez</b> · ₡35,000</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Alerta morosidad <b>3 clientes</b> · Sede Heredia</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Nueva inscripción <b>Pedro Jiménez</b> · Plan Profesional</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Check-in <b>María Quesada</b> · Sede Cartago · hace 4 min</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Vencimiento próximo <b>8 clientes</b> · En 3 días</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Rutina actualizada <b>Luis Fernández</b> · Día 3 completado</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Cobro automático <b>₡142,000</b> · 4 renovaciones hoy</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Check-in <b>Carlos Mora</b> · Sede Central · hace 2 min</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Membresía renovada <b>Ana Rodríguez</b> · ₡35,000</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Alerta morosidad <b>3 clientes</b> · Sede Heredia</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Nueva inscripción <b>Pedro Jiménez</b> · Plan Profesional</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Check-in <b>María Quesada</b> · Sede Cartago · hace 4 min</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Vencimiento próximo <b>8 clientes</b> · En 3 días</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Rutina actualizada <b>Luis Fernández</b> · Día 3 completado</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Cobro automático <b>₡142,000</b> · 4 renovaciones hoy</span>
+      </div>
+    </div>
+
+    <section id="hero">
+      <canvas id="canvas-bg"></canvas>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-badge" id="hbadge">
+          <span class="hero-badge-dot"></span>
+          Plataforma para Gimnasios · Costa Rica
+        </div>
+        <h1 class="hero-title" id="htitle">
+          <span class="line"><span class="line-inner">GESTIONA</span></span>
+          <span class="line"><span class="line-inner">TU <span style="color:var(--beige)">GIMNASIO</span></span></span>
+          <span class="line"><span class="line-inner">DE FORMA</span></span>
+          <span class="line"><span class="line-inner" style="color:var(--beige)">INTELIGENTE.</span></span>
+        </h1>
+        <p class="hero-sub" id="hsub">Controla membresías, cobros, asistencia, rutinas, entrenadores y múltiples sedes desde una sola plataforma diseñada para gimnasios de Costa Rica y Latinoamérica.</p>
+        <div class="hero-btns" id="hbtns">
+          <a href={demoLink} class="btn-p" target="_blank" rel="noreferrer">Solicitar Demo</a>
+          <a href="#modulos" class="btn-s">Ver funcionalidades</a>
+        </div>
+        <div class="hero-pills" id="hpills">
+          <span class="pill">Control de membresías</span>
+          <span class="pill">Cobro de mensualidades</span>
+          <span class="pill">Control de acceso</span>
+          <span class="pill">Portal para clientes</span>
+          <span class="pill">Multi sucursal</span>
+          <span class="pill">Reportes en tiempo real</span>
+        </div>
+      </div>
+      <div class="hero-workout-wrap">
+        <div class="hero-workout" id="hero-workout">
+          <div class="workout-head">
+            <div>
+              <div class="workout-kicker">Modo performance</div>
+              <div class="workout-title">Ritmo de gimnasio</div>
+            </div>
+          </div>
+          <div class="workout-stack">
+            <div class="workout-panel">
+              <div class="workout-panel-top">
+                <span class="workout-panel-label">Nuevos ingresos</span>
+                <span class="workout-panel-meta">Clientes activos</span>
+              </div>
+              <div class="rep-display">
+                <div class="rep-count" id="rep-count">0</div>
+                <div class="rep-unit">
+                  <span>REPS</span>
+                  <small>procesos por minuto</small>
+                </div>
+              </div>
+              <div class="rep-bars">
+                <div class="rep-bar"><span class="rep-bar-fill" data-level="96" data-rest="30"></span></div>
+                <div class="rep-bar"><span class="rep-bar-fill" data-level="72" data-rest="20"></span></div>
+                <div class="rep-bar"><span class="rep-bar-fill" data-level="88" data-rest="24"></span></div>
+                <div class="rep-bar"><span class="rep-bar-fill" data-level="64" data-rest="18"></span></div>
+              </div>
+            </div>
+            <div class="workout-panel">
+              <div class="workout-panel-top">
+                <span class="workout-panel-label">Carga operativa</span>
+                <span class="workout-panel-meta">Siempre en movimiento</span>
+              </div>
+              <div class="barbell-rig">
+                <div class="weight-side left">
+                  <span class="weight-plate small"></span>
+                  <span class="weight-plate medium"></span>
+                  <span class="weight-plate large"></span>
+                </div>
+                <div class="barbell-core"></div>
+                <div class="weight-side right">
+                  <span class="weight-plate large"></span>
+                  <span class="weight-plate medium"></span>
+                  <span class="weight-plate small"></span>
+                </div>
+              </div>
+              <div class="workout-metrics">
+                <div class="workout-chip"><span class="chip-value" data-target="98" data-suffix="%">0</span><span class="chip-label">retencion</span></div>
+                <div class="workout-chip"><span class="chip-value" data-target="124">0</span><span class="chip-label">sesiones/dia</span></div>
+                <div class="workout-chip"><span class="chip-value" data-target="42" data-suffix="h">0</span><span class="chip-label">ahorro/mes</span></div>
+              </div>
+            </div>
+            <div class="workout-heart">
+              <div class="heart-glow"></div>
+              <svg viewBox="0 0 320 64" preserveAspectRatio="none" aria-hidden="true">
+                <path id="heart-path" class="heart-line" d="M0 40 L34 40 L49 18 L67 54 L88 14 L106 40 L154 40 L170 26 L188 52 L206 18 L224 40 L320 40"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-hint" id="scroll-hint">
+        <div class="scroll-line"></div>
+        SCROLL
+      </div>
+    </section>
+
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-num" data-target="347">0</span>
+        <span class="stat-label">Clientes activos promedio</span>
+        <span class="stat-track"><span class="stat-track-fill" data-progress="94"></span></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="70">0</span>
+        <span class="stat-label">% reducción administrativa</span>
+        <span class="stat-track"><span class="stat-track-fill" data-progress="70"></span></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="9">0</span>
+        <span class="stat-label">Módulos integrados</span>
+        <span class="stat-track"><span class="stat-track-fill" data-progress="82"></span></span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="24">0</span>
+        <span class="stat-label">Horas de soporte</span>
+        <span class="stat-track"><span class="stat-track-fill" data-progress="100"></span></span>
+      </div>
+    </div>
+
+    <section id="problema">
+      <span class="sec-label reveal">El Problema</span>
+      <h2 class="sec-title reveal">¿TODAVÍA ADMINISTRAS<br />TU GIMNASIO CON<br />EXCEL?</h2>
+      <div class="pain-grid">
+        <div class="pain-card reveal"><span class="pain-ico">📋</span><p class="pain-txt">Membresías vencidas sin seguimiento automático que generan pérdida de ingresos mes a mes</p></div>
+        <div class="pain-card reveal"><span class="pain-ico">💸</span><p class="pain-txt">Clientes morosos que pasan desapercibidos porque no hay un sistema de alertas centralizado</p></div>
+        <div class="pain-card reveal"><span class="pain-ico">🚪</span><p class="pain-txt">Sin control real de quién entra al gimnasio ni si su membresía está vigente al momento del acceso</p></div>
+        <div class="pain-card reveal"><span class="pain-ico">📄</span><p class="pain-txt">Rutinas impresas que se pierden, se desactualizan y no permiten hacer seguimiento del progreso</p></div>
+        <div class="pain-card reveal"><span class="pain-ico">🔢</span><p class="pain-txt">Cobros manuales con alto riesgo de error, sin historial claro ni reportes de ingresos consolidados</p></div>
+        <div class="pain-card reveal"><span class="pain-ico">🗂️</span><p class="pain-txt">Información dispersa entre WhatsApp, Excel, papel y la memoria del administrador</p></div>
+      </div>
+    </section>
+
+    <section class="qr-section">
+      <div>
+        <span class="sec-label reveal">Control de Acceso</span>
+        <h2 class="sec-title reveal">CHECK-IN<br />EN <span style="color:var(--beige)">SEGUNDOS.</span></h2>
+        <p style="font-size:15px;color:rgba(244,241,237,.45);line-height:1.75;margin-top:20px;max-width:420px;margin-bottom:32px" class="reveal">Cada cliente escanea su QR al entrar. El sistema valida su membresía en tiempo real y registra la asistencia automáticamente. Sin filas, sin papel, sin errores.</p>
+        <div style="display:flex;flex-direction:column;gap:12px" class="reveal">
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(244,241,237,.6)"><span style="color:var(--beige);font-size:18px">⚡</span>Validación instantánea de membresía activa</div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(244,241,237,.6)"><span style="color:var(--beige);font-size:18px">📊</span>Registro automático en historial de asistencia</div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(244,241,237,.6)"><span style="color:var(--beige);font-size:18px">🔔</span>Alerta inmediata si la membresía está vencida</div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(244,241,237,.6)"><span style="color:var(--beige);font-size:18px">🏢</span>Compatible con múltiples sedes simultáneamente</div>
+        </div>
+      </div>
+      <div class="qr-widget reveal" id="qr-widget">
+        <div class="qr-widget-head">
+          <div class="qr-widget-title">CONTROL DE ACCESO</div>
+          <div class="qr-status"><span class="live-dot"></span>ACTIVO</div>
+        </div>
+        <div class="qr-box" id="qr-box">
+          <div class="qr-corners">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="qr-grid" id="qr-grid"></div>
+          <div class="qr-scan-line" id="qr-scan-line"></div>
+        </div>
+        <div class="qr-result" id="qr-result">
+          <div class="qr-result-avatar" id="qr-avatar">AM</div>
+          <div>
+            <div class="qr-result-name" id="qr-name">Ana Mora</div>
+            <div class="qr-result-meta" id="qr-plan">PLAN PROFESIONAL · ACTIVO</div>
+          </div>
+          <div class="qr-result-check">✓</div>
+        </div>
+        <div class="qr-log" id="qr-log">
+          <div class="qr-log-item"><span class="qr-log-dot"></span><span class="qr-log-name">Carlos Vargas</span><span class="qr-log-time">08:42</span></div>
+          <div class="qr-log-item"><span class="qr-log-dot"></span><span class="qr-log-name">María Solís</span><span class="qr-log-time">08:38</span></div>
+          <div class="qr-log-item"><span class="qr-log-dot"></span><span class="qr-log-name">Pedro Jiménez</span><span class="qr-log-time">08:31</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="modulos">
+      <div class="mod-header reveal">
+        <div>
+          <span class="sec-label">Funcionalidades</span>
+          <h2 class="sec-title">TODO LO QUE<br />NECESITAS</h2>
+        </div>
+        <p>Una plataforma completa para la gestión integral de tu gimnasio o cadena.</p>
+      </div>
+      <div class="mod-grid">
+        <div class="mod-card reveal"><span class="mod-ico">💳</span><div class="mod-ttl">Membresías y Cobros</div><ul class="mod-list"><li>Registro y control de membresías</li><li>Vencimientos y alertas automáticas</li><li>Clientes morosos en tiempo real</li><li>Historial de pagos completo</li><li>Renovaciones con un clic</li></ul></div>
+        <div class="mod-card reveal"><span class="mod-ico">📲</span><div class="mod-ttl">Control de Asistencia</div><ul class="mod-list"><li>Check-in rápido por QR o código</li><li>Control por día y horario</li><li>Historial de visitas por cliente</li><li>Reportes de asistencia detallados</li><li>Acceso sólo con membresía activa</li></ul></div>
+        <div class="mod-card reveal"><span class="mod-ico">🏋️</span><div class="mod-ttl">Rutinas y Seguimiento</div><ul class="mod-list"><li>Rutinas personalizadas por cliente</li><li>Fotografías de ejercicios</li><li>Mediciones corporales y evolución</li><li>Objetivos físicos y progreso</li><li>Historial completo del cliente</li></ul></div>
+        <div class="mod-card reveal"><span class="mod-ico">👤</span><div class="mod-ttl">Portal del Cliente</div><ul class="mod-list"><li>Consultar rutina desde el celular</li><li>Revisar pagos y estado de membresía</li><li>Ver historial de asistencia</li><li>Seguimiento de progreso físico</li><li>Notificaciones importantes</li></ul></div>
+        <div class="mod-card reveal"><span class="mod-ico">👨‍💼</span><div class="mod-ttl">Gestión de Personal</div><ul class="mod-list"><li>Registro de entrenadores y empleados</li><li>Roles y permisos por usuario</li><li>Control de accesos por sede</li><li>Registro de actividades</li><li>Gestión centralizada del equipo</li></ul></div>
+        <div class="mod-card reveal"><span class="mod-ico">🏢</span><div class="mod-ttl">Multi-sede</div><ul class="mod-list"><li>Administra varias sucursales</li><li>Información centralizada</li><li>Reportes por sede consolidados</li><li>Usuarios y permisos por sede</li><li>Estadísticas comparativas</li></ul></div>
+      </div>
+    </section>
+
+    <div id="parallax-break">
+      <canvas id="canvas-mid"></canvas>
+      <div class="parallax-text">SMART · GYM · CR</div>
+    </div>
+
+    <section class="progress-section">
+      <div class="body-chart reveal" id="body-chart">
+        <div class="body-chart-head">
+          <div class="body-chart-title">PROGRESO DEL CLIENTE</div>
+          <div class="body-chart-range">ENE — JUL 2025</div>
+        </div>
+        <div class="body-metrics">
+          <div class="body-metric">
+            <div class="body-metric-label">Peso</div>
+            <div class="body-metric-val"><span class="body-val-weight">87</span><span style="font-size:18px;opacity:.5">kg</span></div>
+            <div class="body-metric-delta delta-down">↓ <span class="body-delta-weight">6.2</span> kg en 6 meses</div>
+          </div>
+          <div class="body-metric">
+            <div class="body-metric-label">% Grasa</div>
+            <div class="body-metric-val"><span class="body-val-fat">18</span><span style="font-size:18px;opacity:.5">%</span></div>
+            <div class="body-metric-delta delta-down">↓ <span>4.1</span>% reducción</div>
+          </div>
+          <div class="body-metric">
+            <div class="body-metric-label">Masa Muscular</div>
+            <div class="body-metric-val"><span class="body-val-muscle">34</span><span style="font-size:18px;opacity:.5">kg</span></div>
+            <div class="body-metric-delta delta-up">↑ <span>3.8</span> kg ganados</div>
+          </div>
+          <div class="body-metric">
+            <div class="body-metric-label">Sesiones</div>
+            <div class="body-metric-val"><span class="body-val-sessions">94</span></div>
+            <div class="body-metric-delta delta-up" style="color:var(--beige)">★ <span>92%</span> asistencia</div>
+          </div>
+        </div>
+        <svg class="body-svg" id="body-svg" viewBox="0 0 320 80">
+          <defs>
+            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:var(--beige);stop-opacity:.3"></stop>
+              <stop offset="100%" style="stop-color:var(--beige);stop-opacity:0"></stop>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="20" x2="320" y2="20" stroke="rgba(255,255,255,.04)" stroke-width="1"></line>
+          <line x1="0" y1="40" x2="320" y2="40" stroke="rgba(255,255,255,.04)" stroke-width="1"></line>
+          <line x1="0" y1="60" x2="320" y2="60" stroke="rgba(255,255,255,.04)" stroke-width="1"></line>
+          <path id="body-area" d="M0 75 L53 72 L107 65 L160 55 L213 45 L267 38 L320 30 L320 80 L0 80 Z" fill="url(#lineGrad)" opacity="0"></path>
+          <path id="body-line" d="M0 75 L53 72 L107 65 L160 55 L213 45 L267 38 L320 30" fill="none" stroke="var(--beige)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          <circle id="bdot0" cx="0" cy="75" r="3.5" fill="var(--beige)" opacity="0"></circle>
+          <circle id="bdot1" cx="53" cy="72" r="3.5" fill="var(--beige)" opacity="0"></circle>
+          <circle id="bdot2" cx="107" cy="65" r="3.5" fill="var(--beige)" opacity="0"></circle>
+          <circle id="bdot3" cx="160" cy="55" r="3.5" fill="var(--beige)" opacity="0"></circle>
+          <circle id="bdot4" cx="213" cy="45" r="3.5" fill="var(--beige)" opacity="0"></circle>
+          <circle id="bdot5" cx="267" cy="38" r="3.5" fill="var(--beige)" opacity="0"></circle>
+          <circle id="bdot6" cx="320" cy="30" r="3.5" fill="var(--energy)" opacity="0"></circle>
+          <text x="0" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">ENE</text>
+          <text x="48" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">FEB</text>
+          <text x="100" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">MAR</text>
+          <text x="153" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">ABR</text>
+          <text x="206" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">MAY</text>
+          <text x="259" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">JUN</text>
+          <text x="310" y="80" fill="rgba(244,241,237,.25)" font-size="7" font-family="DM Mono,monospace">JUL</text>
+        </svg>
+      </div>
+      <div>
+        <span class="sec-label reveal">Seguimiento de Clientes</span>
+        <h2 class="sec-title reveal">CADA REP<br />CUENTA.<br /><span style="color:var(--beige)">CADA DATO</span><br />TAMBIÉN.</h2>
+        <p style="font-size:15px;color:rgba(244,241,237,.45);line-height:1.75;margin-top:20px;max-width:420px;margin-bottom:32px" class="reveal">Registra el progreso físico de cada cliente: peso, grasa corporal, masa muscular, medidas y fotografías. Visualiza la evolución y motiva con datos reales.</p>
+        <div class="reveal">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gray);margin-bottom:10px;text-transform:uppercase">Calorías quemadas hoy · Sede Central</div>
+          <div class="cal-counter" id="cal-counter">
+            <span class="cal-digit" id="cd0">0</span>
+            <span class="cal-digit" id="cd1">0</span>
+            <span class="cal-digit" id="cd2">0</span>
+            <span class="cal-digit" id="cd3">0</span>
+            <span class="cal-digit" id="cd4">0</span>
+            <span class="cal-unit">KCAL</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="auto">
+      <div class="auto-left">
+        <span class="sec-label reveal">Automatizaciones</span>
+        <h2 class="sec-title reveal">SMART GYM CR<br />TRABAJA<br />POR TI.</h2>
+        <p style="font-size:15px;color:rgba(244,241,237,.45);line-height:1.75;margin-top:16px;max-width:400px" class="reveal">Automatiza las tareas repetitivas que consumen tu tiempo todos los días. Enfócate en tus clientes, nosotros nos encargamos del resto.</p>
+        <div class="auto-tags reveal">
+          <span class="auto-tag">🎂 Cumpleaños</span>
+          <span class="auto-tag">📅 Membresías por vencer</span>
+          <span class="auto-tag">⚠️ Clientes morosos</span>
+          <span class="auto-tag">💰 Cobros pendientes</span>
+          <span class="auto-tag">📲 Mensajes automáticos</span>
+          <span class="auto-tag">📈 Clientes inactivos</span>
+        </div>
+      </div>
+      <div class="flow-wrap reveal">
+        <div class="flow-node"><span class="flow-node-ico">📅</span><div class="flow-node-body"><div class="flow-node-title">Membresía próxima a vencer</div><div class="flow-node-sub">Ana Rodríguez · Vence en 3 días</div></div><span class="flow-node-badge badge-warn">DETECTADO</span></div>
+        <div class="flow-line"></div>
+        <div class="flow-node"><span class="flow-node-ico">📲</span><div class="flow-node-body"><div class="flow-node-title">Mensaje automático enviado</div><div class="flow-node-sub">WhatsApp / Email · Recordatorio renovación</div></div><span class="flow-node-badge badge-ok">ENVIADO</span></div>
+        <div class="flow-line"></div>
+        <div class="flow-node"><span class="flow-node-ico">💰</span><div class="flow-node-body"><div class="flow-node-title">Cobro registrado</div><div class="flow-node-sub">₡35,000 · Plan Mensual · Renovado</div></div><span class="flow-node-badge badge-ok">PAGADO</span></div>
+        <div class="flow-line"></div>
+        <div class="flow-node"><span class="flow-node-ico">✅</span><div class="flow-node-body"><div class="flow-node-title">Membresía renovada</div><div class="flow-node-sub">Nuevo vencimiento: 15 Agosto 2025</div></div><span class="flow-node-badge badge-ok">LISTO</span></div>
+      </div>
+    </section>
+
+    <section id="planes">
+      <span class="sec-label reveal" style="display:block;text-align:center">Planes</span>
+      <h2 class="sec-title reveal" style="text-align:center">ELIGE TU PLAN</h2>
+      <div class="planes-grid">
+        <div class="plan-card reveal"><div class="plan-name">Básico</div><div class="plan-desc">Para gimnasios pequeños que quieren empezar a digitalizar su operación.</div><ul class="plan-feats"><li>Hasta 200 clientes</li><li>Control de membresías</li><li>Registro de cobros</li><li>Control de asistencia</li><li>Reportes esenciales</li></ul><a href={basicPlanLink} class="plan-btn" target="_blank" rel="noreferrer">Contactar Ventas</a></div>
+        <div class="plan-card hot reveal"><div class="plan-name">Profesional</div><div class="plan-desc">Para gimnasios en crecimiento con herramientas avanzadas de fidelización.</div><ul class="plan-feats"><li>Clientes ilimitados</li><li>Portal del cliente</li><li>Rutinas personalizadas</li><li>Mediciones corporales</li><li>Notificaciones automáticas</li><li>Reportería avanzada</li></ul><a href={proPlanLink} class="plan-btn" target="_blank" rel="noreferrer">Contactar Ventas</a></div>
+        <div class="plan-card reveal"><div class="plan-name">Enterprise</div><div class="plan-desc">Para cadenas y empresas con múltiples sucursales y equipos grandes.</div><ul class="plan-feats"><li>Multi sede y multi empresa</li><li>Usuarios ilimitados</li><li>Reportería consolidada</li><li>Soporte prioritario</li><li>Configuración personalizada</li></ul><a href={enterprisePlanLink} class="plan-btn" target="_blank" rel="noreferrer">Contactar Ventas</a></div>
+      </div>
+    </section>
+
+    <section id="cta">
+      <canvas id="canvas-cta"></canvas>
+      <div class="cta-inner">
+        <span class="sec-label" style="display:block;text-align:center;margin-bottom:20px">¿Listo para empezar?</span>
+        <h2 class="cta-ttl">LLEVA TU<br />GIMNASIO AL<br /><span>SIGUIENTE</span><br />NIVEL.</h2>
+        <p class="cta-sub">Administra clientes, membresías, entrenadores, pagos y sedes desde una sola plataforma.</p>
+        <div class="cta-acts">
+          <a href={demoLink} class="btn-p" target="_blank" rel="noreferrer">Solicitar Demo</a>
+        </div>
+        <div class="cta-domain">smartgymcr.com</div>
+      </div>
+    </section>
+
+    <footer>
+      <div>
+        <div class="ft-logo">SMART GYM CR</div>
+        <div class="ft-tag">La plataforma inteligente para tu gimnasio.</div>
+        <div class="ft-contact">
+          <a href={footerWhatsappLink} target="_blank" rel="noreferrer">WhatsApp: +506 6065-8625</a>
+          <a href="mailto:info@dyrsystems.com">Correo: info@dyrsystems.com</a>
+        </div>
+      </div>
+      <ul class="ft-links">
+        <li><a href="#modulos">Funcionalidades</a></li>
+        <li><a href="#auto">Automatizaciones</a></li>
+        <li><a href="#planes">Planes</a></li>
+        <li><a href="#cta">Demo</a></li>
+      </ul>
+      <div class="ft-copy">© 2025 Smart Gym CR · Todos los derechos reservados</div>
+    </footer>
+
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js" defer></script>
+    <script is:inline src="/scripts/landing.js" defer></script>
+  </body>
+</html>
